@@ -8,8 +8,11 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   async function onLogout() {
-    await logout();
+    // Close menu immediately; navigate right away for snappy UX
+    setOpen(false);
     navigate('/');
+    // Fire and forget logout to avoid blocking UI; errors are non-critical here
+    try { await logout(); } catch {}
   }
 
   return (

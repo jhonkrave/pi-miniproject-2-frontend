@@ -32,62 +32,58 @@ export default function EditProfile() {
 
   return (
     <section style={{paddingTop: 64, paddingBottom: 64}}>
-      <div className="container" style={{maxWidth: 800}}>
+      <div className="container" style={{maxWidth: 720}}>
         <h1 style={{fontSize: 40, marginBottom: 40}}>Editar perfil</h1>
-        <form onSubmit={onSubmit} className="card">
-          <div className="grid cols-2">
-            <div className="field">
-              <label htmlFor="firstName">Nombre</label>
-              <input 
-                id="firstName"
-                value={firstName} 
-                onChange={e=>setFirstName(e.target.value)} 
-                placeholder="Juan"
-                required
-                disabled={loading}
-                autoComplete="given-name"
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="lastName">Apellido</label>
-              <input 
-                id="lastName"
-                value={lastName} 
-                onChange={e=>setLastName(e.target.value)} 
-                placeholder="Pérez"
-                required
-                disabled={loading}
-                autoComplete="family-name"
-              />
-            </div>
+        <form onSubmit={onSubmit} className="card" style={{overflow: 'hidden', maxWidth: 560, margin: '0 auto'}}>
+          <div className="field">
+            <label htmlFor="firstName">Nombre</label>
+            <input 
+              id="firstName"
+              value={firstName} 
+              onChange={e=>setFirstName(e.target.value)} 
+              placeholder="Juan"
+              required
+              disabled={loading}
+              autoComplete="given-name"
+            />
           </div>
-          <div className="grid cols-2">
-            <div className="field">
-              <label htmlFor="age">Edad</label>
-              <input 
-                id="age"
-                type="number" 
-                min={13} 
-                value={age} 
-                onChange={e=>setAge(e.target.value ? Number(e.target.value) : '')} 
-                placeholder="18"
-                required
-                disabled={loading}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="email">Correo</label>
-              <input 
-                id="email"
-                type="email" 
-                value={email} 
-                onChange={e=>setEmail(e.target.value)} 
-                placeholder="tu@email.com"
-                required
-                disabled={loading}
-                autoComplete="email"
-              />
-            </div>
+          <div className="field">
+            <label htmlFor="lastName">Apellido</label>
+            <input 
+              id="lastName"
+              value={lastName} 
+              onChange={e=>setLastName(e.target.value)} 
+              placeholder="Pérez"
+              required
+              disabled={loading}
+              autoComplete="family-name"
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="age">Edad</label>
+            <input 
+              id="age"
+              type="number" 
+              min={13} 
+              value={age} 
+              onChange={e=>setAge(e.target.value ? Number(e.target.value) : '')} 
+              placeholder="18"
+              required
+              disabled={loading}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="email">Correo</label>
+            <input 
+              id="email"
+              type="email" 
+              value={email} 
+              onChange={e=>setEmail(e.target.value)} 
+              placeholder="tu@email.com"
+              required
+              disabled={loading}
+              autoComplete="email"
+            />
           </div>
           {error && (
             <div className="error" role="alert" style={{marginBottom: 20}}>
@@ -101,9 +97,14 @@ export default function EditProfile() {
             >
               {loading ? 'Guardando...' : 'Guardar cambios'}
             </button>
-            <Link to="/profile" style={{flex: 1}}>
-              <button className="btn ghost" style={{width: '100%'}}>Cancelar</button>
-            </Link>
+            <button 
+              type="button" 
+              className="btn ghost" 
+              style={{flex: 1}}
+              onClick={() => navigate('/profile')}
+            >
+              Cancelar
+            </button>
           </div>
         </form>
       </div>
