@@ -31,59 +31,55 @@ export default function Signup() {
   return (
     <AuthLayout title="Crear cuenta" subtitle="Únete hoy" center={false}>
       <form onSubmit={onSubmit} noValidate>
-        <div className="grid cols-2">
-          <div className="field">
-            <label htmlFor="firstName">Nombre</label>
-            <input 
-              id="firstName" 
-              value={firstName} 
-              onChange={e => setFirstName(e.target.value)}
-              placeholder="Juan"
-              required 
-              disabled={loading}
-              autoComplete="given-name"
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="lastName">Apellido</label>
-            <input 
-              id="lastName" 
-              value={lastName} 
-              onChange={e => setLastName(e.target.value)}
-              placeholder="Pérez"
-              required 
-              disabled={loading}
-              autoComplete="family-name"
-            />
-          </div>
+        <div className="field">
+          <label htmlFor="firstName">Nombre</label>
+          <input 
+            id="firstName" 
+            value={firstName} 
+            onChange={e => setFirstName(e.target.value)}
+            placeholder="Juan"
+            required 
+            disabled={loading}
+            autoComplete="given-name"
+          />
         </div>
-        <div className="grid cols-2">
-          <div className="field">
-            <label htmlFor="age">Edad</label>
-            <input 
-              id="age" 
-              type="number" 
-              min={13} 
-              value={age} 
-              onChange={e => setAge(e.target.value ? Number(e.target.value) : '')} 
-              placeholder="18"
-              required 
-              disabled={loading}
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="email">Correo</label>
-            <input 
-              id="email" 
-              type="email" 
-              value={email} 
-              onChange={e => setEmail(e.target.value)} 
-              placeholder="tu@email.com"
-              required 
-              disabled={loading}
-              autoComplete="email"
-            />
-          </div>
+        <div className="field">
+          <label htmlFor="lastName">Apellido</label>
+          <input 
+            id="lastName" 
+            value={lastName} 
+            onChange={e => setLastName(e.target.value)}
+            placeholder="Pérez"
+            required 
+            disabled={loading}
+            autoComplete="family-name"
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="age">Edad</label>
+          <input 
+            id="age" 
+            type="number" 
+            min={13} 
+            value={age} 
+            onChange={e => setAge(e.target.value ? Number(e.target.value) : '')} 
+            placeholder="18"
+            required 
+            disabled={loading}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="email">Correo</label>
+          <input 
+            id="email" 
+            type="email" 
+            value={email} 
+            onChange={e => setEmail(e.target.value)} 
+            placeholder="tu@email.com"
+            required 
+            disabled={loading}
+            autoComplete="email"
+          />
         </div>
         <div className="field">
           <label htmlFor="password">Contraseña</label>

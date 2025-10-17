@@ -521,6 +521,7 @@ main {
 }
 
 @media (max-width: 768px) {
+  .container { padding: 0 16px; }
   h1 { font-size: 2rem; }
   h2 { font-size: 1.75rem; }
   
@@ -539,6 +540,12 @@ main {
   
   .auth-split-form { 
     padding: 32px 20px;
+  }
+
+  // Ensure auth forms/cards stretch to viewport width on mobile
+  .auth-split-form .card { 
+    max-width: 100%;
+    width: 100%;
   }
 }
 
