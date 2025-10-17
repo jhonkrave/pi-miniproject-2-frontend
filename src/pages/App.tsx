@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import Home from './Home';
 import About from '../pages/About';
 import Sitemap from '../pages/Sitemap';
@@ -40,24 +40,24 @@ function Shell() {
           <div>
             <div style={{fontWeight:700, color:'var(--text)', marginBottom: 8}}>Páginas</div>
             <div style={{display:'grid', gap: 6}}>
-              <a href="/">Inicio</a>
-              <a href="/about">Sobre nosotros</a>
-              <a href="/login">Ingresar</a>
-              <a href="/signup">Crear cuenta</a>
+              <Link to="/">Inicio</Link>
+              <Link to="/about">Sobre nosotros</Link>
+              <Link to="/login">Ingresar</Link>
+              <Link to="/signup">Crear cuenta</Link>
             </div>
           </div>
           <div>
             <div style={{fontWeight:700, color:'var(--text)', marginBottom: 8}}>Cuenta</div>
             <div style={{display:'grid', gap: 6}}>
-              <a href="/profile">Perfil</a>
-              <a href="/profile/edit">Editar perfil</a>
-              <a href="/forgot-password">Recuperar contraseña</a>
+              <Link to="/profile">Perfil</Link>
+              <Link to="/profile/edit">Editar perfil</Link>
+              <Link to="/forgot-password">Recuperar contraseña</Link>
             </div>
           </div>
           <div>
             <div style={{fontWeight:700, color:'var(--text)', marginBottom: 8}}>Utilidad</div>
             <div style={{display:'grid', gap: 6}}>
-              <a href="/sitemap">Mapa del sitio</a>
+              <Link to="/sitemap">Mapa del sitio</Link>
               <a href="mailto:noreply@lumiflix.com">Contacto</a>
             </div>
           </div>
