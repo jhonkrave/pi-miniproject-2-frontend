@@ -3,6 +3,65 @@ import { api, isStrongPassword } from '../../lib/api';
 import AuthLayout from '../../components/AuthLayout';
 import { Link, useNavigate } from 'react-router-dom';
 
+/**
+ * Password Reset component for LumiFlix - mini project 2
+ * 
+ * This component handles the password reset functionality for users who have received
+ * a password reset link via email. It validates the reset token, provides a secure
+ * password reset form, and manages the complete password update process.
+ * 
+ * **Key Features:**
+ * - Automatic token extraction and validation from URL parameters
+ * - Strong password validation using the isStrongPassword utility function
+ * - Password confirmation matching with real-time validation feedback
+ * - API integration for token verification and password reset requests
+ * - Loading states and comprehensive error handling with user feedback
+ * - Automatic redirection to login page after successful password update
+ * - Accessibility features including ARIA attributes and proper form labels
+ * - Visual feedback for different states: loading, valid, invalid, and success
+ * 
+ * **Component States:**
+ * - `token`: Reset token extracted from URL parameters
+ * - `valid`: Boolean flag indicating token validity (null = loading, true = valid, false = invalid)
+ * - `password`: New password input from the user
+ * - `confirm`: Password confirmation input for validation
+ * - `message`: Success message displayed after successful password update
+ * - `error`: Error message display for failed operations
+ * - `loading`: Loading state during API communication
+ * 
+ * **Password Requirements:**
+ * - Minimum 8 characters
+ * - At least 1 uppercase letter
+ * - At least 1 number
+ * - At least 1 symbol
+ * - Password confirmation must match
+ * 
+ * **Reset Flow:**
+ * 1. Component extracts token from URL on mount
+ * 2. Token is validated via API call
+ * 3. If valid: password reset form is displayed
+ * 4. User enters new password and confirmation
+ * 5. Form validates password strength and matching
+ * 6. On submission: API updates password and shows success message
+ * 7. Automatic redirect to login page after delay
+ * 
+ * The component uses the AuthLayout wrapper for consistent authentication page styling
+ * and integrates with React Router for navigation and URL parameter handling.
+ * 
+ * @component
+ * @returns {JSX.Element} The Password Reset page component with token validation and password update form
+ * 
+ * @example
+ * ```tsx
+ * import Reset from './pages/auth/Reset';
+ * 
+ * function App() {
+ *   return <Reset />;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export default function Reset() {
   const navigate = useNavigate();
   const [token, setToken] = useState('');

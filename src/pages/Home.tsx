@@ -1,5 +1,37 @@
 import { Link } from 'react-router-dom';
 
+/**
+ * Home component for LumiFlix - mini project 2
+ * 
+ * This component renders the main welcoming page of the LumiFlix streaming platform.
+ * It consists of three main sections that provide an engaging user experience:
+ * 
+ * 1. **Hero Section**: Features the main title, tagline, and call-to-action buttons
+ *    for user registration and information about the platform.
+ * 
+ * 2. **Showcase Section**: Displays a grid of placeholder content cards with
+ *    gradient backgrounds and skeleton loading elements to simulate a content library.
+ * 
+ * 3. **Call-to-Action Section**: Contains a prominent banner encouraging users
+ *    to create an account or log in to access platform features.
+ * 
+ * The component uses inline styles for responsive design and creates an attractive
+ * landing page that introduces new users to the LumiFlix platform.
+ * 
+ * @component
+ * @returns {JSX.Element} The Home page component with hero, showcase, and CTA sections
+ * 
+ * @example
+ * ```tsx
+ * import Home from './pages/Home';
+ * 
+ * function App() {
+ *   return <Home />;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export default function Home() {
   return (
     <>

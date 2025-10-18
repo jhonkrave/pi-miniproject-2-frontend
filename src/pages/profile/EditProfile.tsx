@@ -3,6 +3,76 @@ import { FormEvent, useState } from 'react';
 import { api, isValidEmail } from '../../lib/api';
 import { useNavigate, Link } from 'react-router-dom';
 
+/**
+ * Edit Profile component for LumiFlix - mini project 2
+ * 
+ * This component provides user profile editing functionality allowing authenticated users
+ * to update their personal information including name, age, and email address. It manages
+ * form validation, API communication, and user context updates for profile modifications.
+ * 
+ * **Key Features:**
+ * - Pre-populated form fields with current user data from authentication context
+ * - Real-time form validation using utility functions (isValidEmail)
+ * - Age validation with minimum age requirement (13+ years)
+ * - API integration for user profile updates and modifications
+ * - Loading states and comprehensive error handling with user feedback
+ * - Automatic redirection to profile page after successful updates
+ * - Authentication guard to ensure only logged-in users can access the form
+ * - Accessibility features including ARIA attributes and proper form labels
+ * - Cancel functionality to return to profile page without saving changes
+ * - Form validation that prevents submission until all requirements are met
+ * 
+ * **Component States:**
+ * - `firstName`: User's first name input (pre-populated from context)
+ * - `lastName`: User's last name input (pre-populated from context)
+ * - `age`: User's age input (pre-populated from context, minimum 13)
+ * - `email`: User's email address input (pre-populated from context)
+ * - `error`: Error message display for failed update attempts
+ * - `loading`: Loading state during API communication
+ * 
+ * **Validation Requirements:**
+ * - First name: Required, non-empty string
+ * - Last name: Required, non-empty string
+ * - Age: Required, numeric value, minimum 13 years
+ * - Email: Required, valid email format using isValidEmail utility
+ * 
+ * **Authentication Requirements:**
+ * - User must be authenticated to access this component
+ * - Unauthenticated users are redirected with appropriate message
+ * - Component relies on AuthContext for user data and authentication state
+ * 
+ * **Profile Update Flow:**
+ * 1. Component loads with current user data pre-populated in form fields
+ * 2. User modifies desired profile information
+ * 3. Form validates all inputs in real-time
+ * 4. Submit button is enabled only when all validations pass
+ * 5. On submission: API updates user profile with new information
+ * 6. On success: user context is updated and redirects to profile page
+ * 7. On failure: appropriate error message is displayed
+ * 
+ * **Error Handling:**
+ * - Duplicate email error (HTTP 409): "Este correo ya está registrado"
+ * - General errors: Custom error message or fallback message
+ * - Network errors: Graceful error handling with user feedback
+ * - Authentication errors: Redirect to appropriate page with message
+ * 
+ * The component integrates with the AuthContext for user data management,
+ * React Router for navigation, and the API service for profile updates.
+ * 
+ * @component
+ * @returns {JSX.Element} The Edit Profile page component with pre-populated profile editing form
+ * 
+ * @example
+ * ```tsx
+ * import EditProfile from './pages/profile/EditProfile';
+ * 
+ * function App() {
+ *   return <EditProfile />;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export default function EditProfile() {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();

@@ -11,6 +11,26 @@ import EditProfile from '../pages/profile/EditProfile';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 
+/**
+ * Shell component that defines the main layout for LumiFlix - mini project 2.
+ * It includes the navigation bar, main routes, and footer. 
+ * It also includes the RequireAuth component to protect routes that require authentication.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered application shell.
+ * 
+ * @example
+ * ```tsx
+ * import App from './pages/App';
+ * 
+ * function App() {
+ *   return <App />;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
+ */
+
 function Shell() {
   return (
     <div>
@@ -67,12 +87,53 @@ function Shell() {
   );
 }
 
+/**
+ * RequireAuth component for LumiFlix - mini project 2
+ * 
+ * This component is used to protect routes that require authentication.
+ * It checks if the user is authenticated and redirects to the login page if not.
+ * 
+ * @component
+ * @returns {JSX.Element} The RequireAuth component with protected routes
+ * 
+ * @example
+ * ```tsx
+ * import RequireAuth from './pages/App';
+ * 
+ * function App() {
+ *   return <RequireAuth><Profile /></RequireAuth>;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
+ */
 function RequireAuth({ children }: { children: JSX.Element }) {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
   return children;
 }
-
+  
+/**
+ * App component for LumiFlix - mini project 2
+ * 
+ * This component is the main entry point for LumiFlix - mini project 2.
+ * It renders the Shell component which includes the navigation bar, main routes, and footer. 
+ * It also includes the RequireAuth component to protect routes that require authentication.
+ * 
+ * @component
+ * @returns {JSX.Element} The App component with the Shell layout
+ * 
+ * @example
+ * ```tsx
+ * import App from './pages/App';
+ * 
+ * function App() {
+ *   return <App />;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export default function App() { return <Shell />; }
 
 

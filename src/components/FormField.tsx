@@ -1,5 +1,13 @@
 import React from 'react';
 
+/**
+ * FormFieldProps interface for LumiFlix - mini project 2
+ * 
+ * This interface defines the properties for the FormField component.
+ * 
+ * @interface
+ * @since 1.0.0
+ */
 interface FormFieldProps {
   label: string;
   type?: string;
@@ -17,9 +25,23 @@ interface FormFieldProps {
 }
 
 /**
- * Reusable form field component with consistent styling
- * @param props - FormField properties
- * @returns React component
+ * FormField component for LumiFlix - mini project 2
+ * 
+ * This component is used to render a form field with a label, input, and error message.
+ * 
+ * @component
+ * @returns {JSX.Element} The FormField component with the label, input, and error message
+ * 
+ * @example
+ * ```tsx
+ * import FormField from './components/FormField';
+ * 
+ * function App() {
+ *   return <FormField label="Email" type="email" placeholder="Email" value="test@example.com" onChange={() => {}} />;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
  */
 export default function FormField({
   label,
