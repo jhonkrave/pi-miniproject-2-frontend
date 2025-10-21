@@ -3,6 +3,77 @@ import { api, isStrongPassword, isValidEmail } from '../../lib/api';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthLayout from '../../components/AuthLayout';
 
+/**
+ * User Registration component for LumiFlix - mini project 2
+ * 
+ * This component provides user registration functionality allowing new users to create
+ * accounts on the LumiFlix platform. It manages a comprehensive registration form with
+ * personal information validation, secure password requirements, and API integration
+ * for account creation.
+ * 
+ * **Key Features:**
+ * - Complete user registration form with personal information fields
+ * - Real-time form validation using utility functions (isValidEmail, isStrongPassword)
+ * - Age validation with minimum age requirement (13+ years)
+ * - API integration for user account creation and registration
+ * - Loading states and comprehensive error handling with user feedback
+ * - Automatic redirection to login page after successful registration
+ * - Accessibility features including ARIA attributes and proper form labels
+ * - Links to existing user login page for better user navigation
+ * - Form validation that prevents submission until all requirements are met
+ * 
+ * **Component States:**
+ * - `firstName`: User's first name input
+ * - `lastName`: User's last name input
+ * - `age`: User's age input (number, minimum 13)
+ * - `email`: User's email address input
+ * - `password`: User's password input with security requirements
+ * - `loading`: Loading state during API communication
+ * - `error`: Error message display for failed registration attempts
+ * 
+ * **Validation Requirements:**
+ * - First name: Required, non-empty string
+ * - Last name: Required, non-empty string
+ * - Age: Required, numeric value, minimum 13 years
+ * - Email: Required, valid email format using isValidEmail utility
+ * - Password: Required, strong password using isStrongPassword utility
+ * 
+ * **Password Security Requirements:**
+ * - Minimum 8 characters
+ * - At least 1 uppercase letter
+ * - At least 1 number
+ * - At least 1 symbol
+ * 
+ * **Registration Flow:**
+ * 1. User fills out all required registration fields
+ * 2. Form validates all inputs in real-time
+ * 3. Submit button is enabled only when all validations pass
+ * 4. On submission: API creates user account
+ * 5. On success: user is redirected to login page
+ * 6. On failure: appropriate error message is displayed
+ * 
+ * **Error Handling:**
+ * - Duplicate email error (HTTP 409): "Este correo ya está registrado"
+ * - General errors: Custom error message or fallback message
+ * - Network errors: Graceful error handling with user feedback
+ * 
+ * The component uses the AuthLayout wrapper for consistent authentication page styling
+ * and integrates with React Router for navigation and the API service for user registration.
+ * 
+ * @component
+ * @returns {JSX.Element} The User Registration page component with comprehensive signup form
+ * 
+ * @example
+ * ```tsx
+ * import Signup from './pages/auth/Signup';
+ * 
+ * function App() {
+ *   return <Signup />;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export default function Signup() {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState('');

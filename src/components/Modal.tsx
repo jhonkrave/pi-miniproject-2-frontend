@@ -1,5 +1,15 @@
 import { useEffect } from 'react';
 
+/**
+ * Modal component for LumiFlix - mini project 2
+ * 
+ * This component is used to render a modal with a title, content, and close button.
+ * 
+ * @component
+ * @returns {JSX.Element} The Modal component with the title, content, and close button
+ * 
+ * @since 1.0.0
+ */
 type Props = {
   open: boolean;
   title: string;

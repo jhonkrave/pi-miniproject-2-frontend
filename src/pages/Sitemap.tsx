@@ -1,5 +1,39 @@
 import { Link } from 'react-router-dom';
 
+/**
+ * Sitemap component for LumiFlix - mini project 2
+ * 
+ * This component renders a comprehensive sitemap page that provides users with
+ * an organized overview of all available pages and sections within the LumiFlix platform.
+ * The sitemap is structured into three main categories for better navigation:
+ * 
+ * 1. **Public Pages**: Contains links to publicly accessible pages including
+ *    home, about, login, signup, and password recovery pages.
+ * 
+ * 2. **Account Pages**: Displays user-specific pages such as profile view
+ *    and profile editing functionality (requires authentication).
+ * 
+ * 3. **Utility Pages**: Includes utility and informational pages like the
+ *    sitemap itself and contact information.
+ * 
+ * The component uses a responsive grid layout with card-based sections to
+ * present the navigation structure in an organized and user-friendly manner.
+ * All internal links use React Router's Link component for client-side navigation.
+ * 
+ * @component
+ * @returns {JSX.Element} The Sitemap page component with organized navigation links
+ * 
+ * @example
+ * ```tsx
+ * import Sitemap from './pages/Sitemap';
+ * 
+ * function App() {
+ *   return <Sitemap />;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export default function Sitemap() {
   return (
     <section style={{ paddingTop: 64, paddingBottom: 64 }}>
