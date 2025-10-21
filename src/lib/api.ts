@@ -115,13 +115,19 @@ export const api = {
     return http<User>(`/auth/users/me`, { method: 'GET' });
   },
 
-  updateProfile(payload: { firstName: string; lastName: string; age: number; email: string }) {
-    const body = {
+  updateProfile(payload: { firstName: string; lastName: string; age: number; email: string; password?: string }) {
+    const body: any = {
       firstname: payload.firstName,
       lastname: payload.lastName,
       age: payload.age,
       email: payload.email,
     };
+    
+    // Add password to body if provided
+    if (payload.password) {
+      body.password = payload.password;
+    }
+    
     return http<User>(`/auth/users/me`, { method: 'PUT', body: JSON.stringify(body) });
   },
 

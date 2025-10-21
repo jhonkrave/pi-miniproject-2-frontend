@@ -1,6 +1,6 @@
 import { useAuth } from '../../context/AuthContext';
 import { FormEvent, useState } from 'react';
-import { api, isValidEmail } from '../../lib/api';
+import { api, isValidEmail, isStrongPassword } from '../../lib/api';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function EditProfile() {
@@ -10,19 +10,31 @@ export default function EditProfile() {
   const [lastName, setLastName] = useState(user?.lastName || '');
   const [age, setAge] = useState<number | ''>(user?.age || '');
   const [email, setEmail] = useState(user?.email || '');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   if (!user) return <section className="grid"><h1>Editar perfil</h1><p>Debes iniciar sesión.</p></section>;
 
-  const valid = firstName && lastName && typeof age === 'number' && age >= 13 && isValidEmail(email);
+  const valid = firstName && lastName && typeof age === 'number' && age >= 13 && isValidEmail(email) && (password === '' || isStrongPassword(password));
+  
+  // Check if any field has been changed from original values
+  const hasChanges = firstName !== (user?.firstName || '') ||
+                    lastName !== (user?.lastName || '') ||
+                    age !== (user?.age || '') ||
+                    email !== (user?.email || '') ||
+                    password !== '';
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-      const updated = await api.updateProfile({ firstName, lastName, age: age as number, email });
+      const updateData: any = { firstName, lastName, age: age as number, email };
+      if (password) {
+        updateData.password = password;
+      }
+      const updated = await api.updateProfile(updateData);
       setUser(updated);
       navigate('/profile');
     } catch (err: any) { 
@@ -85,6 +97,23 @@ export default function EditProfile() {
               autoComplete="email"
             />
           </div>
+          <div className="field">
+            <label htmlFor="password">Nueva contraseña (opcional)</label>
+            <input 
+              id="password"
+              type="password" 
+              value={password} 
+              onChange={e=>setPassword(e.target.value)} 
+              placeholder="Ingresa una nueva contraseña"
+              disabled={loading}
+              autoComplete="new-password"
+            />
+            {password && !isStrongPassword(password) && (
+              <div className="error" style={{marginTop: 8, fontSize: 14}}>
+                La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos
+              </div>
+            )}
+          </div>
           {error && (
             <div className="error" role="alert" style={{marginBottom: 20}}>
               {error}
@@ -92,7 +121,7 @@ export default function EditProfile() {
           )}
           <div style={{display: 'flex', gap: 12, marginTop: 28}}>
             <button 
-              disabled={!valid || loading}
+              disabled={!valid || !hasChanges || loading}
               style={{flex: 1}}
             >
               {loading ? 'Guardando...' : 'Guardar cambios'}
