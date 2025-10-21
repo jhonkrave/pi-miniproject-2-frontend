@@ -4,6 +4,79 @@ import { api } from '../../lib/api';
 import { useState } from 'react';
 import Modal from '../../components/Modal';
 
+/**
+ * User Profile component for LumiFlix - mini project 2
+ * 
+ * This component provides a comprehensive user profile display and management interface
+ * for authenticated users. It displays user information, provides profile editing capabilities,
+ * and includes secure account deletion functionality with confirmation mechanisms.
+ * 
+ * **Key Features:**
+ * - Complete user profile display with avatar, personal information, and membership details
+ * - Profile information includes name, email, age, and account creation date
+ * - Avatar generation using user's first and last name initials
+ * - Profile editing navigation with link to EditProfile component
+ * - Secure account deletion with confirmation modal and text verification
+ * - Authentication guard to ensure only logged-in users can access the profile
+ * - Responsive design with card-based layout for profile information
+ * - Loading states and error handling for account deletion operations
+ * - Automatic logout and redirection after successful account deletion
+ * 
+ * **Component States:**
+ * - `showDelete`: Boolean flag controlling the account deletion modal visibility
+ * - `password`: Confirmation text input for account deletion ("ELIMINAR")
+ * - `error`: Error message display for failed deletion attempts
+ * - `loadingDelete`: Loading state during account deletion API communication
+ * 
+ * **Profile Information Display:**
+ * - User avatar (generated from first and last name initials)
+ * - Full name (first name + last name)
+ * - Email address with proper text wrapping
+ * - Age display with proper formatting
+ * - Account creation date in localized format
+ * 
+ * **Account Deletion Security:**
+ * - Modal confirmation dialog with clear warning about irreversible action
+ * - Text confirmation requirement: user must type "ELIMINAR"
+ * - API integration for secure account deletion
+ * - Automatic logout and redirection after successful deletion
+ * - Comprehensive error handling with user feedback
+ * 
+ * **Authentication Requirements:**
+ * - User must be authenticated to access this component
+ * - Unauthenticated users are redirected with appropriate message
+ * - Component relies on AuthContext for user data and authentication state
+ * 
+ * **User Actions Available:**
+ * 1. View complete profile information
+ * 2. Navigate to profile editing page
+ * 3. Delete account with confirmation process
+ * 
+ * **Account Deletion Flow:**
+ * 1. User clicks "Eliminar" button to open confirmation modal
+ * 2. Modal displays warning about irreversible action
+ * 3. User must type "ELIMINAR" to confirm deletion
+ * 4. On confirmation: API deletes user account
+ * 5. On success: user is logged out and redirected to home page
+ * 6. On failure: error message is displayed to user
+ * 
+ * The component integrates with the AuthContext for user data management,
+ * React Router for navigation, and the API service for account operations.
+ * 
+ * @component
+ * @returns {JSX.Element} The User Profile page component with profile display and management features
+ * 
+ * @example
+ * ```tsx
+ * import Profile from './pages/profile/Profile';
+ * 
+ * function App() {
+ *   return <Profile />;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export default function Profile() {
   const { user, refresh, logout } = useAuth();
   const navigate = useNavigate();

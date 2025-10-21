@@ -3,6 +3,44 @@ import { api, isValidEmail } from '../../lib/api';
 import AuthLayout from '../../components/AuthLayout';
 import { Link } from 'react-router-dom';
 
+/**
+ * Forgot Password component for LumiFlix - mini project 2
+ * 
+ * This component provides a password recovery functionality that allows users to request
+ * a password reset link via email. The component manages the entire password recovery flow
+ * including form validation, API communication, and user feedback.
+ * 
+ * **Key Features:**
+ * - Email validation using the isValidEmail utility function
+ * - API integration for sending password reset requests
+ * - Loading states and error handling with user feedback
+ * - Success state display with confirmation message
+ * - Performance monitoring with timing logs for debugging
+ * - Accessibility features including ARIA attributes and proper form labels
+ * 
+ * **Component States:**
+ * - `email`: User's email input for password recovery
+ * - `done`: Boolean flag indicating successful email submission
+ * - `error`: Error message display for failed requests
+ * - `loading`: Loading state during API communication
+ * 
+ * The component uses the AuthLayout wrapper for consistent authentication page styling
+ * and includes a link back to the login page for better user navigation.
+ * 
+ * @component
+ * @returns {JSX.Element} The Forgot Password page component with email recovery form
+ * 
+ * @example
+ * ```tsx
+ * import Forgot from './pages/auth/Forgot';
+ * 
+ * function App() {
+ *   return <Forgot />;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export default function Forgot() {
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);

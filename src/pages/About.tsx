@@ -1,4 +1,28 @@
 
+/**
+ * About component for LumiFlix - mini project 2
+ * 
+ * This component renders the "About" page that provides information about the LumiFlix platform.
+ * It displays three main sections explaining the platform's value proposition, privacy and security features,
+ * and the reasons to choose LumiFlix for streaming entertainment.
+ * 
+ * The component uses inline styles for layout and styling, creating a centered container with
+ * responsive card-based sections that describe the platform's key features and benefits.
+ * 
+ * @component
+ * @returns {JSX.Element} The About page component with platform information
+ * 
+ * @example
+ * ```tsx
+ * import About from './pages/About';
+ * 
+ * function App() {
+ *   return <About />;
+ * }
+ * ```
+ * 
+ * @since 1.0.0
+ */
 export default function About() {
   return (
     <section style={{paddingTop: 64, paddingBottom: 64}}>

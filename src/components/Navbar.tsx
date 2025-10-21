@@ -2,6 +2,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 
+/**
+ * Navbar component for LumiFlix - mini project 2
+ * 
+ * This component is used to render the navigation bar.
+ * 
+ * @component
+ * @returns {JSX.Element} The Navbar component with the navigation bar
+ * 
+ * @since 1.0.0
+ */
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();

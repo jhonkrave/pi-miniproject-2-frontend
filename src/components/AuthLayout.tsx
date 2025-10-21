@@ -1,3 +1,14 @@
+/**
+ * AuthLayout component for LumiFlix - mini project 2
+ * 
+ * This component is used to wrap the authentication pages.
+ * It includes the title, subtitle, and children components.
+ * 
+ * @component
+ * @returns {JSX.Element} The AuthLayout component with the title, subtitle, and children
+ * 
+ * @since 1.0.0
+ */
 type Props = {
   title: string;
   subtitle?: string;
