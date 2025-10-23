@@ -330,6 +330,7 @@ export const api = {
    * @param {string} payload.lastName - Updated last name
    * @param {number} payload.age - Updated age (minimum 13 years)
    * @param {string} payload.email - Updated email address (must be unique)
+   * @param {string} [payload.password] - Optional new password
    * @returns {Promise<User>} Promise that resolves to the updated user data
    * 
    * @throws {Object} Error object with status and message properties
@@ -343,19 +344,26 @@ export const api = {
    *   firstName: 'Jane',
    *   lastName: 'Smith',
    *   age: 26,
-   *   email: 'jane@example.com'
+   *   email: 'jane@example.com',
+   *   password: 'NewSecurePass123!'
    * });
    * ```
    * 
    * @since 1.0.0
    */
-  updateProfile(payload: { firstName: string; lastName: string; age: number; email: string }) {
-    const body = {
+  updateProfile(payload: { firstName: string; lastName: string; age: number; email: string; password?: string }) {
+    const body: any = {
       firstname: payload.firstName,
       lastname: payload.lastName,
       age: payload.age,
       email: payload.email,
     };
+    
+    // Add password to body if provided
+    if (payload.password) {
+      body.password = payload.password;
+    }
+    
     return http<User>(`/auth/users/me`, { method: 'PUT', body: JSON.stringify(body) });
   },
 
