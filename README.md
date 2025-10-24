@@ -84,6 +84,9 @@ src/
 | `/signup` | Crear cuenta | Público |
 | `/forgot-password` | Recuperar contraseña | Público |
 | `/reset-password` | Restablecer contraseña | Público |
+| `/movies` | Catálogo: buscar/filtrar/paginar | Público |
+| `/watch/:id` | Reproducir película (Pexels) | Autenticado |
+| `/favorites` | Listar favoritos | Autenticado |
 | `/profile` | Perfil del usuario | Autenticado |
 | `/profile/edit` | Editar perfil | Autenticado |
 
@@ -132,6 +135,8 @@ const { user, logout, refresh } = useAuth();
 
 ```env
 VITE_API_BASE_URL=http://localhost:3000/api
+# Opcional en desarrollo para proxy (vite.config.ts)
+VITE_PROXY_TARGET=http://localhost:3000
 ```
 
 ## 🎬 Animaciones
@@ -205,6 +210,9 @@ Los estilos globales están en `src/styles/main.scss`. Usa las variables CSS def
 - ✅ Tema oscuro elegante
 - ✅ Animaciones fluidas
 - ✅ Accesibilidad completa
+- ✅ Catálogo TMDB: búsqueda, géneros, paginación
+- ✅ Reproductor Pexels con play/pausa/stop
+- ✅ Favoritos: añadir, listar, eliminar
 
 ## 🤝 Contribuir
 

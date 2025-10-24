@@ -27,6 +27,34 @@ export type User = {
 };
 
 /**
+ * Movie and catalog related types for Sprint 2
+ * @since 2.0.0
+ */
+export type MovieGenre = { id: number; name: string };
+export type MovieItem = {
+  id: number;
+  title: string;
+  year?: number;
+  poster?: string;
+  backdrop?: string;
+  overview?: string;
+  voteAverage?: number;
+  genres?: MovieGenre[];
+  genreIds?: number[];
+};
+export type PagedMovies = {
+  page: number;
+  total_pages: number;
+  total_results: number;
+  results: MovieItem[];
+};
+export type WatchResponse = {
+  movie: MovieItem;
+  video: any;
+  provider: 'pexels';
+};
+
+/**
  * Global type declaration for Vite environment variables
  * 
  * Extends the ImportMeta interface to include custom environment variables
@@ -83,6 +111,48 @@ function buildUrl(path: string): string {
     console.warn('[api] VITE_API_BASE_URL is not set. Using http://localhost:3000/api');
   }
   return `${base}${p}`;
+}
+
+// ===== Internal normalizers (defensive to backend variations) =====
+function toPosterUrl(path?: string): string | undefined {
+  if (!path) return undefined;
+  if (/^https?:\/\//.test(path)) return path;
+  return `https://image.tmdb.org/t/p/w500${path}`;
+}
+
+function toBackdropUrl(path?: string): string | undefined {
+  if (!path) return undefined;
+  if (/^https?:\/\//.test(path)) return path;
+  return `https://image.tmdb.org/t/p/original${path}`;
+}
+
+function normalizeMovieItem(raw: any): MovieItem {
+  const id = Number(raw?.id ?? raw?.movieId ?? 0);
+  const title = String(raw?.title ?? raw?.name ?? '');
+  const year = (() => {
+    if (raw?.year) return Number(String(raw.year).slice(0, 4));
+    const rd = raw?.releaseDate || raw?.release_date || raw?.first_air_date;
+    return rd ? Number(String(rd).slice(0, 4)) : undefined;
+  })();
+  const poster = raw?.poster ?? raw?.posterUrl ?? toPosterUrl(raw?.poster_path);
+  const backdrop = raw?.backdrop ?? raw?.backdropUrl ?? toBackdropUrl(raw?.backdrop_path);
+  const overview = raw?.overview;
+  const voteAverage = typeof raw?.vote_average === 'number' ? raw?.vote_average : undefined;
+  const genres = raw?.genres;
+  const genreIds = Array.isArray(raw?.genreIds) ? raw.genreIds as number[] : undefined;
+  return { id, title, year, poster, backdrop, overview, voteAverage, genres, genreIds } as MovieItem;
+}
+
+function normalizeMoviesList(data: any): PagedMovies {
+  // Accept shapes: { results: [...] }, { movies: [...] }, direct array, or empty
+  const arr = Array.isArray(data) ? data
+    : (Array.isArray(data?.results) ? data.results
+    : (Array.isArray(data?.movies) ? data.movies : []));
+  const page = Number(data?.page || 1);
+  const total_pages = Number(data?.total_pages || (data?.totalPages || 1));
+  const total_results = Number(data?.total_results || (arr?.length ?? 0));
+  const results = (arr || []).map(normalizeMovieItem);
+  return { page, total_pages, total_results, results };
 }
 
 /**
@@ -487,6 +557,67 @@ export const api = {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: form.toString(),
     });
+  },
+
+  // ===== Movies (Sprint 2) =====
+  /**
+   * Get genres list from TMDB via backend
+   */
+  getGenres(language?: string) {
+    const qs = language ? `?language=${encodeURIComponent(language)}` : '';
+    return http<{ genres: MovieGenre[] }>(`/movie/movies/genres${qs}`);
+  },
+
+  /**
+   * Unified list endpoint: search (q), filter by genreId, or popular
+   */
+  async getMovies(params?: { q?: string; genreId?: string; page?: number; language?: string }): Promise<PagedMovies> {
+    const search = new URLSearchParams();
+    if (params?.q) search.set('q', params.q);
+    if (params?.genreId) search.set('genreId', params.genreId);
+    if (params?.page) search.set('page', String(params?.page || 1));
+    if (params?.language) search.set('language', params.language);
+    const qs = search.toString();
+    const raw = await http<any>(`/movie/movies${qs ? `?${qs}` : ''}`);
+    return normalizeMoviesList(raw);
+  },
+
+  /**
+   * Get movie details by id
+   */
+  async getMovie(id: string | number, language?: string) {
+    const qs = language ? `?language=${encodeURIComponent(language)}` : '';
+    const raw = await http<any>(`/movie/movies/${id}${qs}`);
+    const movie = normalizeMovieItem((raw as any)?.movie ?? raw);
+    return { movie } as { movie: MovieItem };
+  },
+
+  /**
+   * Resolve a playable video via Pexels for a movie id (auth required)
+   */
+  async watch(id: string | number, language?: string) {
+    const qs = language ? `?language=${encodeURIComponent(language)}` : '';
+    const r = await http<any>(`/movie/watch/${id}${qs}`);
+    return { movie: normalizeMovieItem(r.movie), video: r.video, provider: r.provider } as WatchResponse;
+  },
+
+  /** Favorites (auth required) */
+  addFavorite(movieId: string | number) {
+    return http<{ _id: string; userId: string; movieId: string }>(`/movie/favorite`, {
+      method: 'POST',
+      body: JSON.stringify({ movieId: String(movieId) })
+    });
+  },
+  removeFavorite(movieId: string | number) {
+    return http<{ _id: string; userId: string; movieId: string }>(`/movie/favorite`, {
+      method: 'DELETE',
+      body: JSON.stringify({ movieId: String(movieId) })
+    });
+  },
+  async getFavorites() {
+    const raw = await http<{ movies: any[]; total: number }>(`/movie/favorites`);
+    const movies = (raw.movies || []).map(normalizeMovieItem);
+    return { movies, total: raw.total || 0 };
   },
 };
 
