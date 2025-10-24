@@ -1,3 +1,5 @@
+import { SpinnerIcon } from './Icons';
+
 /**
  * Spinner component for LumiFlix - mini project 2
  * 
@@ -10,11 +12,9 @@
  */
 export default function Spinner({ size = 16, color = 'currentColor' }: { size?: number; color?: string }) {
   return (
-    <span
-      aria-hidden
-      className="spinner"
-      style={{ width: size, height: size, borderColor: color, borderTopColor: 'transparent' }}
-    />
+    <span aria-hidden style={{ color, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+      <SpinnerIcon size={size} />
+    </span>
   );
 }
 

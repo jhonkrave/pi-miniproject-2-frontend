@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './pages/App';
 import './styles/main.scss';
 import { AuthProvider } from './context/AuthContext';
+import { FavoritesProvider } from './context/FavoritesContext';
 
 /**
  * Application entry point that renders the LumiFlix - mini project 2
@@ -30,9 +31,11 @@ import { AuthProvider } from './context/AuthContext';
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AuthProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <FavoritesProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </FavoritesProvider>
     </AuthProvider>
   </React.StrictMode>
 );
