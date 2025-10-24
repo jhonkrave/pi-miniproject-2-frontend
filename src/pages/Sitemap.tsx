@@ -48,6 +48,7 @@ export default function Sitemap() {
             <h2 style={{ fontSize: 18, marginBottom: 12 }}>Páginas públicas</h2>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)' }}>
               <li style={{ marginBottom: 10 }}><Link to="/">Inicio</Link></li>
+              <li style={{ marginBottom: 10 }}><Link to="/movies">Catálogo</Link></li>
               <li style={{ marginBottom: 10 }}><Link to="/about">Sobre nosotros</Link></li>
               <li style={{ marginBottom: 10 }}><Link to="/login">Ingresar</Link></li>
               <li style={{ marginBottom: 10 }}><Link to="/signup">Crear cuenta</Link></li>
@@ -58,6 +59,7 @@ export default function Sitemap() {
           <div className="card" style={{ padding: 20 }}>
             <h2 style={{ fontSize: 18, marginBottom: 12 }}>Páginas de cuenta</h2>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)' }}>
+              <li style={{ marginBottom: 10 }}><Link to="/favorites">Mis favoritos</Link></li>
               <li style={{ marginBottom: 10 }}><Link to="/profile">Perfil</Link></li>
               <li style={{ marginBottom: 0 }}><Link to="/profile/edit">Editar perfil</Link></li>
             </ul>

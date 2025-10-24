@@ -10,6 +10,9 @@ import Profile from '../pages/profile/Profile';
 import EditProfile from '../pages/profile/EditProfile';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
+import Search from './Search';
+import Watch from './Watch';
+import Favorites from './Favorites';
 
 /**
  * Shell component that defines the main layout for LumiFlix - mini project 2.
@@ -33,10 +36,10 @@ import Navbar from '../components/Navbar';
 
 function Shell() {
   return (
-    <div>
+    <div className="app-layout">
       <Navbar />
 
-      <main className="container" role="main">
+      <main className="main-content" role="main">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -45,44 +48,49 @@ function Shell() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<Forgot />} />
           <Route path="/reset-password" element={<Reset />} />
+          <Route path="/search" element={<RequireAuth><Search /></RequireAuth>} />
+          <Route path="/watch/:id" element={<RequireAuth><Watch /></RequireAuth>} />
+          <Route path="/favorites" element={<RequireAuth><Favorites /></RequireAuth>} />
           <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
           <Route path="/profile/edit" element={<RequireAuth><EditProfile /></RequireAuth>} />
+          {/* Redirect old /movies route to /search */}
+          <Route path="/movies" element={<Navigate to="/search" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </main>
 
-      <footer className="footer">
-        <div className="container" style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))', gap: 20, textAlign:'left'}}>
-          <div>
-            <div style={{fontWeight:700, color:'var(--text)'}}>LumiFlix</div>
-            <div style={{color:'var(--text-muted)'}}>© {new Date().getFullYear()} Todos los derechos reservados</div>
-          </div>
-          <div>
-            <div style={{fontWeight:700, color:'var(--text)', marginBottom: 8}}>Páginas</div>
-            <div style={{display:'grid', gap: 6}}>
-              <Link to="/">Inicio</Link>
-              <Link to="/about">Sobre nosotros</Link>
-              <Link to="/login">Ingresar</Link>
-              <Link to="/signup">Crear cuenta</Link>
+        <footer className="footer">
+          <div className="container" style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))', gap: 20, textAlign:'left'}}>
+            <div>
+              <div style={{fontWeight:700, color:'var(--text)'}}>LumiFlix</div>
+              <div style={{color:'var(--text-muted)'}}>© {new Date().getFullYear()} Todos los derechos reservados</div>
+            </div>
+            <div>
+              <div style={{fontWeight:700, color:'var(--text)', marginBottom: 8}}>Páginas</div>
+              <div style={{display:'grid', gap: 6}}>
+                <Link to="/">Inicio</Link>
+                <Link to="/about">Sobre nosotros</Link>
+                <Link to="/login">Ingresar</Link>
+                <Link to="/signup">Crear cuenta</Link>
+              </div>
+            </div>
+            <div>
+              <div style={{fontWeight:700, color:'var(--text)', marginBottom: 8}}>Cuenta</div>
+              <div style={{display:'grid', gap: 6}}>
+                <Link to="/profile">Perfil</Link>
+                <Link to="/profile/edit">Editar perfil</Link>
+                <Link to="/forgot-password">Recuperar contraseña</Link>
+              </div>
+            </div>
+            <div>
+              <div style={{fontWeight:700, color:'var(--text)', marginBottom: 8}}>Utilidad</div>
+              <div style={{display:'grid', gap: 6}}>
+                <Link to="/sitemap">Mapa del sitio</Link>
+                <a href="mailto:noreply@lumiflix.com">Contacto</a>
+              </div>
             </div>
           </div>
-          <div>
-            <div style={{fontWeight:700, color:'var(--text)', marginBottom: 8}}>Cuenta</div>
-            <div style={{display:'grid', gap: 6}}>
-              <Link to="/profile">Perfil</Link>
-              <Link to="/profile/edit">Editar perfil</Link>
-              <Link to="/forgot-password">Recuperar contraseña</Link>
-            </div>
-          </div>
-          <div>
-            <div style={{fontWeight:700, color:'var(--text)', marginBottom: 8}}>Utilidad</div>
-            <div style={{display:'grid', gap: 6}}>
-              <Link to="/sitemap">Mapa del sitio</Link>
-              <a href="mailto:noreply@lumiflix.com">Contacto</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </main>
     </div>
   );
 }
