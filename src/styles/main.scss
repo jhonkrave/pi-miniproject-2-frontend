@@ -39,7 +39,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   
   @media (min-width: 1024px) {
-    padding-left: 240px; // Space for sidebar on desktop
+    padding-left: 0; // No desktop sidebar
   }
   
   @media (max-width: 1023px) {
@@ -856,12 +856,18 @@ main {
   flex-direction: column;
 }
 
+.route-content {
+  flex: 1 0 auto; // grow with page content so footer sits after content
+  min-height: auto;
+}
+
 .auth-shell {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 140px);
+  min-height: auto;
   padding: 40px 20px;
+  padding-bottom: 48px; // tasteful spacing above footer
 }
 
 .auth-card {
@@ -891,8 +897,9 @@ main {
 .auth-split {
   display: grid;
   grid-template-columns: 1.2fr 1fr; // give more space to the hero for tall images
-  min-height: calc(100vh - 70px);
+  min-height: auto; // allow content to define height so footer is pushed below
   gap: 0;
+  padding-bottom: 48px; // modest spacing above footer
 }
 
 .auth-split-hero {
@@ -941,15 +948,16 @@ main {
   flex-direction: column;
   justify-content: center;
   padding: 72px 64px;
+  padding-bottom: 64px; // prevent footer overlap without large gap
   
   .auth-title { margin-bottom: 24px; }
-  .card { margin-top: 24px; padding: 24px; max-width: 520px; }
+  .card { margin-top: 24px; margin-bottom: 24px; padding: 24px; max-width: 520px; }
 }
 
 @media (max-width: 1024px) {
   .auth-split { grid-template-columns: 1fr; }
   .auth-split-hero { display: none; }
-  .auth-split-form { padding: 48px 32px; }
+  .auth-split-form { padding: 48px 32px; padding-bottom: 56px; }
 }
 
 @media (max-width: 768px) {
@@ -1326,14 +1334,109 @@ main {
   z-index: 1000;
   transition: all 0.3s ease;
   
-  @media (min-width: 1024px) {
-    display: none;
-  }
-  
   &.scrolled {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   }
 }
+
+// CTA to scroll below hero
+.hero-scroll-cta {
+  position: absolute;
+  left: 50%;
+  bottom: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-radius: 999px;
+  background: rgba(10, 14, 39, 0.55);
+  backdrop-filter: blur(6px);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+  text-shadow: none;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.2px;
+  transition: none;
+  z-index: 3;
+  transform: translateX(-50%) translateY(0) !important;
+  margin-left: 0;
+  &::before { content: none !important; }
+
+  &:hover { 
+    background: rgba(10, 14, 39, 0.7); 
+    transform: translateX(-50%) translateY(0) !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+  }
+  &:active { 
+    background: rgba(10, 14, 39, 0.8); 
+    transform: translateX(-50%) translateY(0) !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+  }
+  &:focus { 
+    outline: none; 
+    transform: translateX(-50%) translateY(0) !important;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+  }
+}
+
+// Keep hero actions tidy
+.hero-actions { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+
+// Full-viewport hero carousel on catalog
+.hero-featured.hero-carousel {
+  position: relative;
+  min-height: calc(100vh - 64px); // occupy the view under the navbar
+  display: flex;
+  align-items: center;
+  padding: 80px 0 140px; // extra space so bottom CTA is always visible
+  overflow: hidden;
+}
+
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.7);
+  transform: scale(1.05);
+}
+
+.hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,14,39,0) 50%, rgba(10,14,39,0.85) 85%, rgba(10,14,39,1) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  padding: 0 24px;
+}
+
+.hero-indicators {
+  position: static;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 2;
+}
+
+.hero-indicators .indicator {
+  width: 28px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.hero-indicators .indicator.active { background: white; }
 
 .mobile-brand {
   display: flex;
@@ -1396,10 +1499,6 @@ main {
   backdrop-filter: blur(4px);
   z-index: 9999;
   animation: fadeIn 0.2s ease;
-  
-  @media (min-width: 1024px) {
-    display: none;
-  }
 }
 
 .mobile-menu {
