@@ -64,7 +64,7 @@ export default function Login() {
     try {
       const res = await api.login({ email, password });
       setUser(res.user);
-      navigate('/profile');
+      navigate('/');
     } catch (err: any) {
       setError(err?.message || 'Credenciales inválidas. Por favor intenta de nuevo.');
     } finally { setLoading(false); }

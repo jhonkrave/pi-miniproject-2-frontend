@@ -24,6 +24,7 @@ export default function Search() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const enableInfiniteScroll = false;
 
   const currentYear = new Date().getFullYear();
 
@@ -119,6 +120,7 @@ export default function Search() {
 
   // Infinite scroll observer
   useEffect(() => {
+    if (!enableInfiniteScroll) return;
     if (!loadMoreRef.current || loading || !hasMore) return;
     
     const observer = new IntersectionObserver(
@@ -132,7 +134,7 @@ export default function Search() {
 
     observer.observe(loadMoreRef.current);
     return () => observer.disconnect();
-  }, [loading, hasMore]);
+  }, [loading, hasMore, enableInfiniteScroll]);
 
   // Show/hide scroll to top button
   useEffect(() => {
@@ -310,15 +312,20 @@ export default function Search() {
                 ))}
               </div>
 
-              {/* Infinite scroll trigger */}
-              <div ref={loadMoreRef} style={{padding:'40px 0', textAlign:'center'}}>
+              {/* Load more button (no infinite scroll) */}
+              <div style={{padding:'32px 0 12px', textAlign:'center'}}>
+                {hasMore && !loading && (
+                  <button onClick={() => setPage(p => p + 1)} className="btn-secondary" aria-label="Cargar más resultados">
+                    Ver más
+                  </button>
+                )}
                 {loading && (
-                  <div>
+                  <div style={{marginTop:12}}>
                     <Spinner /> <span style={{marginLeft:12}}>Cargando más películas...</span>
                   </div>
                 )}
-                {!hasMore && !loading && movieList.length > 20 && (
-                  <p style={{color:'var(--text-secondary)', fontSize:14}}>
+                {!hasMore && !loading && movieList.length > 0 && (
+                  <p style={{color:'var(--text-secondary)', fontSize:14, marginTop:12}}>
                     ✓ Has llegado al final ({movieList.length} películas)
                   </p>
                 )}
