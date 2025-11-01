@@ -6,6 +6,7 @@ type AuthContextType = {
   setUser: (u: User | null) => void;
   refresh: () => Promise<void>;
   logout: () => Promise<void>;
+  isInitializing: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,6 +33,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
   /**
    * Refresh the user data
    * 
@@ -48,6 +50,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(me);
     } catch {
       setUser(null);
+    } finally {
+      setIsInitializing(false);
     }
   }
 
@@ -64,12 +68,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function logout() {
     try { await api.logout(); } catch {}
     setUser(null);
+    setIsInitializing(false);
   }
 
   useEffect(() => { refresh(); }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, refresh, logout }}>
+    <AuthContext.Provider value={{ user, setUser, refresh, logout, isInitializing }}>
       {children}
     </AuthContext.Provider>
   );
