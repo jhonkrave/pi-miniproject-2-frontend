@@ -88,6 +88,7 @@ function Shell() {
               <div style={{fontWeight:700, color:'var(--text)', marginBottom: 8}}>Utilidad</div>
               <div style={{display:'grid', gap: 6}}>
                 <Link to="/sitemap">Mapa del sitio</Link>
+                <a href="/manual-usuario.pdf" target="_blank" rel="noopener noreferrer">Manual de usuario</a>
                 <a href="mailto:noreply@lumiflix.com">Contacto</a>
               </div>
             </div>
