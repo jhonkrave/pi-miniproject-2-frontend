@@ -58,6 +58,10 @@ export default function FormField({
   helperText,
   icon,
 }: FormFieldProps) {
+  const errorId = error && id ? `${id}-error` : undefined;
+  const helperId = helperText && id ? `${id}-helper` : undefined;
+  const describedBy = [errorId, helperId].filter(Boolean).join(' ') || undefined;
+  
   return (
     <div className="field">
       <label htmlFor={id}>{label}</label>
@@ -71,13 +75,24 @@ export default function FormField({
           placeholder={placeholder}
           disabled={disabled}
           required={required}
+          aria-required={required ? 'true' : undefined}
+          aria-invalid={error ? 'true' : 'false'}
+          aria-describedby={describedBy}
           min={min}
           autoComplete={autoComplete}
           style={icon ? { paddingLeft: 40 } : {}}
         />
       </div>
-      {helperText && <div className="muted">{helperText}</div>}
-      {error && <div className="error" role="alert">⚠️ {error}</div>}
+      {helperText && (
+        <div id={helperId} className="muted" aria-live="polite">
+          {helperText}
+        </div>
+      )}
+      {error && (
+        <div id={errorId} className="error" role="alert" aria-live="assertive">
+          ⚠️ {error}
+        </div>
+      )}
     </div>
   );
 }

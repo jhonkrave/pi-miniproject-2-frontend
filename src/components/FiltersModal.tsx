@@ -35,14 +35,18 @@ export default function FiltersModal({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content filters-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="filters-modal-title">
+      <div 
+        id="filters-modal"
+        className="modal-content filters-modal" 
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="modal-header">
           <div className="modal-title">
             <FilterIcon size={24} />
-            <h2>Filtros de búsqueda</h2>
+            <h2 id="filters-modal-title">Filtros de búsqueda</h2>
           </div>
-          <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar">
+          <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar filtros">
             <CloseIcon size={24} />
           </button>
         </div>

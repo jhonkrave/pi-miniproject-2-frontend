@@ -111,7 +111,7 @@ export default function Reset() {
         </div>
       )}
       {valid === true && (
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} aria-busy={loading}>
           <div className="field">
             <label htmlFor="pwd">Nueva contraseña</label>
             <input 
@@ -121,6 +121,9 @@ export default function Reset() {
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
               required
+              aria-required="true"
+              aria-describedby={`pwd-help${error || (confirm && confirm !== password) ? ' reset-error' : ''}`}
+              aria-invalid={error ? 'true' : 'false'}
               disabled={loading}
               autoComplete="new-password"
             />
@@ -137,15 +140,26 @@ export default function Reset() {
               onChange={e => setConfirm(e.target.value)}
               placeholder="••••••••"
               required
+              aria-required="true"
+              aria-describedby={confirm && confirm !== password ? 'pwd2-error' : undefined}
+              aria-invalid={confirm && confirm !== password ? 'true' : 'false'}
               disabled={loading}
               autoComplete="new-password"
             />
             {confirm && confirm !== password && (
-              <div className="error" role="alert" style={{marginTop: 8}}>Las contraseñas no coinciden</div>
+              <div id="pwd2-error" className="error" role="alert" aria-live="assertive" style={{marginTop: 8}}>
+                Las contraseñas no coinciden
+              </div>
             )}
           </div>
           {error && (
-            <div role="alert" className="error" aria-live="polite" style={{marginBottom: 20}}>
+            <div 
+              id="reset-error"
+              role="alert" 
+              className="error" 
+              aria-live="assertive" 
+              style={{marginBottom: 20}}
+            >
               {error}
             </div>
           )}

@@ -193,7 +193,7 @@ export default function Search() {
   return (
     <div className="search-page">
       {/* Search hero section - collapsible */}
-      <section className={`search-hero ${minimizeSearch ? 'minimized' : ''}`}>
+      <section className={`search-hero ${minimizeSearch ? 'minimized' : ''}`} id="search-hero-content">
         <div className="container">
           {!minimizeSearch && <h1 className="search-title">Buscar</h1>}
           
@@ -228,6 +228,8 @@ export default function Search() {
                 className={`filters-btn ${activeFiltersCount > 0 ? 'has-filters' : ''}`}
                 onClick={() => setShowFiltersModal(true)}
                 aria-label="Abrir filtros"
+                aria-controls="filters-modal"
+                aria-expanded={showFiltersModal}
               >
                 <FilterIcon size={20} />
               </button>
@@ -236,6 +238,8 @@ export default function Search() {
                 className="minimize-btn"
                 onClick={() => setMinimizeSearch(!minimizeSearch)}
                 aria-label={minimizeSearch ? "Expandir búsqueda" : "Minimizar búsqueda"}
+                aria-expanded={!minimizeSearch}
+                aria-controls="search-hero-content"
               >
                 {minimizeSearch ? <ChevronDownIcon size={20} /> : <ChevronUpIcon size={20} />}
               </button>

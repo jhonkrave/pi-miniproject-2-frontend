@@ -423,9 +423,9 @@ export default function Watch() {
   }, [data?.movie?.id]);
 
   return (
-    <section className="watch-page">
+    <section className="watch-page" aria-busy={loading}>
       {loading && (
-        <div className="watch-loading-container">
+        <div className="watch-loading-container" aria-live="polite">
           <VideoLoader />
         </div>
       )}

@@ -101,7 +101,7 @@ export default function Signup() {
 
   return (
     <AuthLayout title="Crear cuenta" subtitle="Únete hoy" center={false}>
-      <form onSubmit={onSubmit} noValidate>
+      <form onSubmit={onSubmit} noValidate aria-busy={loading}>
         <div className="field">
           <label htmlFor="firstName">Nombre</label>
           <input 
@@ -110,6 +110,9 @@ export default function Signup() {
             onChange={e => setFirstName(e.target.value)}
             placeholder="Juan"
             required 
+            aria-required="true"
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={error ? 'signup-error' : undefined}
             disabled={loading}
             autoComplete="given-name"
           />
@@ -122,6 +125,9 @@ export default function Signup() {
             onChange={e => setLastName(e.target.value)}
             placeholder="Pérez"
             required 
+            aria-required="true"
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={error ? 'signup-error' : undefined}
             disabled={loading}
             autoComplete="family-name"
           />
@@ -136,6 +142,9 @@ export default function Signup() {
             onChange={e => setAge(e.target.value ? Number(e.target.value) : '')} 
             placeholder="18"
             required 
+            aria-required="true"
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={error ? 'signup-error' : undefined}
             disabled={loading}
           />
         </div>
@@ -148,6 +157,9 @@ export default function Signup() {
             onChange={e => setEmail(e.target.value)} 
             placeholder="tu@email.com"
             required 
+            aria-required="true"
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={error ? 'signup-error' : undefined}
             disabled={loading}
             autoComplete="email"
           />
@@ -161,7 +173,9 @@ export default function Signup() {
             onChange={e => setPassword(e.target.value)} 
             placeholder="••••••••"
             required 
-            aria-describedby="pwd-help"
+            aria-required="true"
+            aria-describedby={`pwd-help${error ? ' signup-error' : ''}`}
+            aria-invalid={error ? 'true' : 'false'}
             disabled={loading}
             autoComplete="new-password"
           />
@@ -170,7 +184,13 @@ export default function Signup() {
           </div>
         </div>
         {error && (
-          <div role="alert" className="error" aria-live="polite" style={{marginBottom: 20}}>
+          <div 
+            id="signup-error"
+            role="alert" 
+            className="error" 
+            aria-live="assertive" 
+            style={{marginBottom: 20}}
+          >
             {error}
           </div>
         )}
