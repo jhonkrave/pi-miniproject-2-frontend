@@ -66,83 +66,7 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <aside className="sidebar-nav">
-        <Link className="sidebar-brand" to="/" aria-label="LumiFlix Home">
-          <img src="/logo.svg" alt="LumiFlix" width={32} height={32} style={{borderRadius: 8}} />
-        </Link>
-        
-        <nav className="sidebar-menu" aria-label="Principal">
-          {user && (
-            <Link 
-              to="/search" 
-              className={`sidebar-item ${isActive('/search') ? 'active' : ''}`}
-              title="Buscar"
-            >
-              <SearchIcon size={24} />
-              <span>Buscar</span>
-            </Link>
-          )}
-          
-          <Link 
-            to="/" 
-            className={`sidebar-item ${isActive('/') ? 'active' : ''}`}
-            title="Inicio"
-          >
-            <HomeIcon size={24} />
-            <span>Inicio</span>
-          </Link>
-          
-          {user && (
-            <Link 
-              to="/favorites" 
-              className={`sidebar-item ${isActive('/favorites') ? 'active' : ''}`}
-              title="Favoritos"
-            >
-              <HeartIcon size={24} />
-              <span>Favoritos</span>
-            </Link>
-          )}
-          
-          <Link 
-            to="/about" 
-            className={`sidebar-item ${isActive('/about') ? 'active' : ''}`}
-            title="Sobre nosotros"
-          >
-            <InfoIcon size={24} />
-            <span>Sobre nosotros</span>
-          </Link>
-        </nav>
-
-        <div className="sidebar-footer">
-          {!user ? (
-            <div className="sidebar-auth">
-              <Link to="/login" className="sidebar-login" title="Ingresar">
-                <UserIcon size={20} />
-                <span>Ingresar</span>
-              </Link>
-              <Link to="/signup" className="sidebar-signup" title="Crear cuenta">
-                <UserIcon size={20} />
-                <span>Crear cuenta</span>
-              </Link>
-            </div>
-          ) : (
-            <div className="sidebar-user">
-              <Link to="/profile" className="sidebar-profile" title="Perfil">
-                <div className="sidebar-avatar">
-                  {user.firstName?.[0]?.toUpperCase() || 'U'}
-                </div>
-                <div className="sidebar-user-info">
-                  <span className="sidebar-user-name">{user.firstName || 'Usuario'}</span>
-                </div>
-              </Link>
-              <button onClick={onLogout} className="sidebar-logout" title="Cerrar sesión" aria-label="Cerrar sesión">
-                <LogoutIcon size={20} />
-              </button>
-            </div>
-          )}
-        </div>
-      </aside>
+      {/* Desktop Sidebar removed in favor of top navbar with right-side menu */}
 
       {/* Mobile Top Nav */}
       <header className={`mobile-nav ${scrolled ? 'scrolled' : ''}`}>
@@ -219,7 +143,7 @@ export default function Navbar() {
               <>
                 <Link to="/login" className="mobile-menu-item" onClick={()=>setOpen(false)}>
                   <UserIcon size={20} />
-                  <span>Ingresar</span>
+                  <span>Iniciar sesión</span>
                 </Link>
                 <Link to="/signup" className="mobile-menu-item primary" onClick={()=>setOpen(false)}>
                   <UserIcon size={20} />
