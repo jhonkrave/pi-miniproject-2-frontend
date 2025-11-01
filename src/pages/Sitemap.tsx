@@ -50,7 +50,7 @@ export default function Sitemap() {
               <li style={{ marginBottom: 10 }}><Link to="/">Inicio</Link></li>
               <li style={{ marginBottom: 10 }}><Link to="/movies">Catálogo</Link></li>
               <li style={{ marginBottom: 10 }}><Link to="/about">Sobre nosotros</Link></li>
-              <li style={{ marginBottom: 10 }}><Link to="/login">Ingresar</Link></li>
+              <li style={{ marginBottom: 10 }}><Link to="/login">Iniciar sesión</Link></li>
               <li style={{ marginBottom: 10 }}><Link to="/signup">Crear cuenta</Link></li>
               <li style={{ marginBottom: 0 }}><Link to="/forgot-password">Recuperar contraseña</Link></li>
             </ul>

@@ -55,6 +55,124 @@ export type WatchResponse = {
 };
 
 /**
+ * Rating and comments types for Sprint 3
+ * @since 3.0.0
+ */
+export type Rating = {
+  _id?: string;
+  userId: string;
+  movieId: string | number;
+  rating: number; // 1-5 (normalized from 'stars' field)
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+/**
+ * Normalizes rating data from backend
+ * Backend returns { success, message, data } or direct data object
+ * Backend may return 'stars' field, we normalize to 'rating'
+ */
+function normalizeRating(raw: any): Rating {
+  // Extract data from response if it's wrapped in { success, message, data }
+  const data = raw?.data || raw;
+  
+  return {
+    _id: data?._id,
+    userId: data?.userId || data?.user?.id || data?.userId?._id || '',
+    movieId: data?.movieId || data?.movie_id || '',
+    rating: data?.rating ?? data?.stars ?? 0, // Backend uses 'stars', we normalize to 'rating'
+    createdAt: data?.createdAt || data?.created_at,
+    updatedAt: data?.updatedAt || data?.updated_at,
+  };
+}
+
+/**
+ * Normalizes rating stats from backend
+ * Backend returns { success, message, data } where data has totalRatings
+ */
+function normalizeRatingStats(raw: any): RatingStats {
+  // Extract data from response if it's wrapped in { success, message, data }
+  const data = raw?.data || raw;
+  
+  return {
+    average: data?.average ?? 0,
+    count: data?.count ?? data?.totalRatings ?? 0,
+    distribution: data?.distribution ? Object.fromEntries(
+      Object.entries(data.distribution).map(([k, v]) => [Number(k), Number(v)])
+    ) : undefined,
+  };
+}
+
+export type RatingStats = {
+  average: number;
+  count: number;
+  distribution?: Record<number, number>; // rating -> count
+};
+
+export type Comment = {
+  _id: string;
+  userId: string;
+  movieId: string | number;
+  text: string;
+  createdAt: string;
+  updatedAt?: string;
+  user?: {
+    id?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    username?: string;
+  };
+};
+
+/**
+ * Subtitle types for Sprint 3
+ * @since 3.0.0
+ */
+export type Subtitle = {
+  _id: string;
+  movieId: string | number;
+  language: 'es' | 'en';
+  url: string;
+  label: string;
+  isDefault: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+/**
+ * Normalizes comment data from backend
+ * Backend returns { success, message, data } or direct data object
+ */
+function normalizeComment(raw: any): Comment {
+  // Extract data from response if it's wrapped in { success, message, data }
+  const data = raw?.data || raw;
+  
+  // Handle userId which can be string, object with id, or nested user object
+  let userId = '';
+  if (typeof data?.userId === 'string') {
+    userId = data.userId;
+  } else if (data?.userId?.id) {
+    userId = data.userId.id;
+  } else if (data?.user?.id) {
+    userId = data.user.id;
+  } else if (data?.userId?._id) {
+    userId = data.userId._id;
+  }
+  
+  return {
+    _id: data?._id || '',
+    userId,
+    movieId: data?.movieId || data?.movie_id || '',
+    // Backend may return 'content' or 'text', normalize to 'text' for frontend
+    text: data?.text || data?.content || '',
+    createdAt: data?.createdAt || data?.created_at || '',
+    updatedAt: data?.updatedAt || data?.updated_at,
+    user: data?.user || data?.userId || undefined,
+  };
+}
+
+/**
  * Global type declaration for Vite environment variables
  * 
  * Extends the ImportMeta interface to include custom environment variables
@@ -618,6 +736,259 @@ export const api = {
     const raw = await http<{ movies: any[]; total: number }>(`/movie/favorites`);
     const movies = (raw.movies || []).map(normalizeMovieItem);
     return { movies, total: raw.total || 0 };
+  },
+
+  // ===== Ratings (Sprint 3) =====
+  /**
+   * Create or update a rating for a movie (auth required)
+   * 
+   * @param {Object} payload - Rating data
+   * @param {string|number} payload.movieId - Movie ID
+   * @param {number} payload.rating - Rating value (1-5)
+   * @returns {Promise<Rating>} Promise that resolves to the created/updated rating
+   * 
+   * @since 3.0.0
+   */
+  async createRating(payload: { movieId: string | number; rating: number }): Promise<Rating> {
+    const raw = await http<any>(`/ratings`, {
+      method: 'POST',
+      body: JSON.stringify({ movieId: String(payload.movieId), stars: payload.rating })
+    });
+    // Backend returns { success, message, data }
+    return normalizeRating(raw);
+  },
+
+  /**
+   * Update an existing rating (auth required)
+   * 
+   * @param {string} ratingId - Rating ID
+   * @param {number} rating - New rating value (1-5)
+   * @returns {Promise<Rating>} Promise that resolves to the updated rating
+   * 
+   * @since 3.0.0
+   */
+  async updateRating(ratingId: string, rating: number): Promise<Rating> {
+    const raw = await http<any>(`/ratings/${ratingId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ stars: rating })
+    });
+    // Backend returns { success, message, data }
+    return normalizeRating(raw);
+  },
+
+  /**
+   * Get rating statistics for a movie
+   * 
+   * @param {string|number} movieId - Movie ID
+   * @returns {Promise<RatingStats>} Promise that resolves to rating statistics
+   * 
+   * @since 3.0.0
+   */
+  async getMovieRatingStats(movieId: string | number): Promise<RatingStats> {
+    const raw = await http<any>(`/ratings/movie/${movieId}`);
+    // Backend returns { success, message, data }
+    return normalizeRatingStats(raw);
+  },
+
+  /**
+   * Get the current user's rating for a movie (auth required)
+   * 
+   * @param {string|number} movieId - Movie ID
+   * @returns {Promise<Rating | null>} Promise that resolves to the user's rating or null
+   * 
+   * @since 3.0.0
+   */
+  async getUserRating(movieId: string | number): Promise<Rating | null> {
+    try {
+      const raw = await http<any>(`/ratings/movie/${movieId}/user`);
+      // Backend returns { success, message, data }
+      return normalizeRating(raw);
+    } catch (e: any) {
+      // 404 means user hasn't rated this movie yet
+      if (e?.status === 404) {
+        return null;
+      }
+      throw e;
+    }
+  },
+
+  // ===== Comments (Sprint 3) =====
+  /**
+   * Get all comments for a movie
+   * 
+   * @param {string|number} movieId - Movie ID
+   * @returns {Promise<Comment[]>} Promise that resolves to array of comments
+   * 
+   * @since 3.0.0
+   */
+  async getMovieComments(movieId: string | number): Promise<Comment[]> {
+    try {
+      const raw = await http<any>(`/comments/movie/${movieId}`);
+      // Backend may return { success, message, data: { comments: [...] } } or direct array
+      const comments = raw?.data?.comments || raw?.comments || (Array.isArray(raw?.data) ? raw.data : []);
+      return Array.isArray(comments) ? comments.map(normalizeComment) : [];
+    } catch (e: any) {
+      // If 5xx error, throw with user-friendly message
+      if (e?.status >= 500) {
+        throw { status: e.status, message: 'No pudimos obtener los comentarios, inténtalo más tarde' };
+      }
+      // For 404 or other client errors, return empty array (no comments yet or endpoint not found)
+      // Don't throw for 401 here - let the component handle it appropriately
+      if (e?.status === 404 || e?.status === 400) {
+        return [];
+      }
+      // For 401, throw it so component can decide what to do
+      throw e;
+    }
+  },
+
+  /**
+   * Create a new comment for a movie (auth required)
+   * 
+   * @param {Object} payload - Comment data
+   * @param {string|number} payload.movieId - Movie ID
+   * @param {string} payload.text - Comment text (will be sent as 'content' to backend)
+   * @returns {Promise<Comment>} Promise that resolves to the created comment
+   * 
+   * @throws {Object} Error object with status and message properties
+   * - Status 400: Empty text
+   * - Status 401: Not authenticated
+   * 
+   * @since 3.0.0
+   */
+  async createComment(payload: { movieId: string | number; text: string }): Promise<Comment> {
+    if (!payload.text || payload.text.trim().length === 0) {
+      throw { status: 400, message: 'El comentario no puede estar vacío' };
+    }
+    
+    // Backend expects 'content' instead of 'text'
+    const raw = await http<any>(`/comments`, {
+      method: 'POST',
+      body: JSON.stringify({ movieId: String(payload.movieId), content: payload.text.trim() })
+    });
+    // Backend returns { success, message, data }
+    return normalizeComment(raw);
+  },
+
+  /**
+   * Update an existing comment (auth required, owner only)
+   * 
+   * @param {string} commentId - Comment ID
+   * @param {string} text - New comment text (will be sent as 'content' to backend)
+   * @returns {Promise<Comment>} Promise that resolves to the updated comment
+   * 
+   * @throws {Object} Error object with status and message properties
+   * - Status 400: Empty text
+   * - Status 401: Not authenticated
+   * - Status 403: Not the owner
+   * 
+   * @since 3.0.0
+   */
+  async updateComment(commentId: string, text: string): Promise<Comment> {
+    if (!text || text.trim().length === 0) {
+      throw { status: 400, message: 'El comentario no puede estar vacío' };
+    }
+    
+    // Backend expects 'content' instead of 'text'
+    const raw = await http<any>(`/comments/${commentId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ content: text.trim() })
+    });
+    // Backend returns { success, message, data }
+    return normalizeComment(raw);
+  },
+
+  /**
+   * Delete a comment (auth required, owner only)
+   * 
+   * @param {string} commentId - Comment ID
+   * @returns {Promise<void>} Promise that resolves when comment is deleted
+   * 
+   * @throws {Object} Error object with status and message properties
+   * - Status 401: Not authenticated
+   * - Status 403: Not the owner
+   * 
+   * @since 3.0.0
+   */
+  async deleteComment(commentId: string): Promise<void> {
+    await http<void>(`/comments/${commentId}`, {
+      method: 'DELETE'
+    });
+  },
+
+  // ===== Subtitles (Sprint 3) =====
+  /**
+   * Get all available subtitles for a movie
+   * 
+   * @param {string|number} movieId - Movie ID
+   * @returns {Promise<Subtitle[]>} Promise that resolves to array of available subtitles
+   * 
+   * @throws {Object} Error object with status and message properties
+   * - Status 404: No subtitles available
+   * 
+   * @since 3.0.0
+   */
+  async getMovieSubtitles(movieId: string | number): Promise<Subtitle[]> {
+    try {
+      const raw = await http<any>(`/subtitles/movie/${movieId}`);
+      // Backend returns { success, message, data: [...] }
+      const subtitles = raw?.data || [];
+      return Array.isArray(subtitles) ? subtitles.map((s: any) => ({
+        _id: s._id || '',
+        movieId: s.movieId || movieId,
+        language: s.language as 'es' | 'en',
+        url: s.url || '',
+        label: s.label || (s.language === 'es' ? 'Spanish' : 'English'),
+        isDefault: s.isDefault || false,
+        createdAt: s.createdAt,
+        updatedAt: s.updatedAt,
+      })) : [];
+    } catch (e: any) {
+      // 404 means no subtitles available
+      if (e?.status === 404) {
+        return [];
+      }
+      throw e;
+    }
+  },
+
+  /**
+   * Get a specific subtitle by language for a movie
+   * 
+   * @param {string|number} movieId - Movie ID
+   * @param {'es'|'en'} language - Subtitle language
+   * @returns {Promise<Subtitle | null>} Promise that resolves to the subtitle or null
+   * 
+   * @throws {Object} Error object with status and message properties
+   * - Status 400: Invalid language
+   * - Status 404: Subtitle not available for this language
+   * 
+   * @since 3.0.0
+   */
+  async getMovieSubtitle(movieId: string | number, language: 'es' | 'en'): Promise<Subtitle | null> {
+    try {
+      const raw = await http<any>(`/subtitles/movie/${movieId}/${language}`);
+      // Backend returns { success, message, data: {...} }
+      const data = raw?.data || raw;
+      if (!data) return null;
+      
+      return {
+        _id: data._id || '',
+        movieId: data.movieId || movieId,
+        language: data.language as 'es' | 'en',
+        url: data.url || '',
+        label: data.label || (data.language === 'es' ? 'Spanish' : 'English'),
+        isDefault: data.isDefault || false,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+      };
+    } catch (e: any) {
+      // 404 means subtitle not available for this language
+      if (e?.status === 404 || e?.status === 400) {
+        return null;
+      }
+      throw e;
+    }
   },
 };
 

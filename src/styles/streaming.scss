@@ -761,14 +761,183 @@
 .watch-page {
   background: black;
   min-height: 100vh;
+  
+  // Position page to start below fixed navbar (64px height)
+  // Desktop (min-width: 1024px): body has no padding, so we add margin-top
+  // Mobile (max-width: 1023px): body has padding-top: 64px, so we use that
+  @media (min-width: 1024px) {
+    margin-top: 64px; // Desktop: push page below fixed navbar
+  }
+  
+  // Mobile already has body padding-top: 64px, so no additional margin needed
+}
+
+// ===== Video Loading State =====
+.watch-loading-container {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  
+  // Account for navbar on all screens
+  @media (min-width: 1024px) {
+    top: 64px;
+    height: calc(100vh - 64px);
+  }
+  
+  @media (max-width: 1023px) {
+    top: 64px;
+    height: calc(100vh - 64px);
+  }
+}
+
+.video-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.video-loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.video-loader-spinner {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  
+  @media (max-width: 768px) {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.spinner-ring {
+  position: absolute;
+  inset: 0;
+  border: 3px solid transparent;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spinRing 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  
+  &:nth-child(1) {
+    border-top-color: #6366f1;
+    animation-delay: 0s;
+  }
+  
+  &:nth-child(2) {
+    border-top-color: #818cf8;
+    animation-delay: 0.2s;
+    inset: 12px;
+  }
+  
+  &:nth-child(3) {
+    border-top-color: #a5b4fc;
+    animation-delay: 0.4s;
+    inset: 24px;
+  }
+}
+
+@keyframes spinRing {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.video-loader-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  
+  @media (max-width: 768px) {
+    font-size: 16px;
+    gap: 6px;
+  }
+}
+
+.loading-text {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.loading-dots {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  height: 24px;
+  
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #6366f1;
+    animation: dotPulse 1.4s ease-in-out infinite;
+    
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+    
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes dotPulse {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .video-player {
   position: relative;
   width: 100%;
-  height: 100vh;
   background: black;
   overflow: hidden;
+  touch-action: manipulation; // Improve touch responsiveness on mobile
+
+  // All screens: account for fixed navbar (64px) - player occupies remaining viewport
+  // Desktop: watch-page has margin-top: 64px, so player height = 100vh - 64px
+  // Mobile: body has padding-top: 64px, so player height = 100vh - 64px
+  height: calc(100vh - 64px);
+  min-height: calc(100vh - 64px);
+  max-height: calc(100vh - 64px);
 
   video {
     width: 100%;
@@ -785,7 +954,11 @@
   place-items: center;
   background: rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  z-index: 1;
+  z-index: 2;
+  
+  @media (max-width: 768px) {
+    background: rgba(0, 0, 0, 0.2);
+  }
 }
 
 .play-button {
@@ -801,6 +974,7 @@
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  -webkit-tap-highlight-color: transparent; // Remove tap highlight on mobile
 
   svg {
     transition: transform 0.2s ease;
@@ -819,6 +993,16 @@
   &:active {
     transform: scale(0.95);
   }
+
+  @media (max-width: 768px) {
+    width: 64px;
+    height: 64px;
+    
+    svg {
+      width: 32px;
+      height: 32px;
+    }
+  }
 }
 
 .video-controls {
@@ -832,18 +1016,83 @@
   transition: opacity 0.3s ease;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.6) 0%,
-    transparent 20%,
-    transparent 80%,
-    rgba(0, 0, 0, 0.8) 100%
+    rgba(0, 0, 0, 0.7) 0%,
+    transparent 25%,
+    transparent 75%,
+    rgba(0, 0, 0, 0.85) 100%
   );
+  z-index: 10;
 
-  .video-player:hover & {
+  // Show controls on hover (desktop) - but NOT when hidden or in fullscreen
+  .video-player:not(.is-fullscreen):hover &:not(.hidden) {
     opacity: 1;
   }
 
+  // Always show controls when paused (only if not hidden)
+  &.visible {
+    opacity: 1;
+    pointer-events: none; // Keep pointer-events none, only buttons/bar have pointer-events all
+  }
+
+  // Hide controls when hidden (force hide, override everything)
+  &.hidden {
+    opacity: 0 !important;
+    pointer-events: none;
+    
+    // But keep pointer events for progress bar (to allow seeking)
+    .progress-bar {
+      pointer-events: all;
+    }
+  }
+
+  // In fullscreen mode, controls are ALWAYS hidden by default unless explicitly visible
+  .video-player.is-fullscreen & {
+    opacity: 0 !important;
+    
+    // Only show when explicitly marked as visible (user interaction)
+    &.visible {
+      opacity: 1 !important;
+    }
+    
+    // Always hide when marked as hidden
+    &.hidden {
+      opacity: 0 !important;
+    }
+    
+    // Show on hover only if visible
+    .video-player.is-fullscreen:hover &.visible {
+      opacity: 1 !important;
+    }
+  }
+
+  // On mobile, always show controls but respect hidden state
+  @media (max-width: 768px) {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.8) 0%,
+      transparent 20%,
+      transparent 70%,
+      rgba(0, 0, 0, 0.9) 100%
+    );
+    
+    &.hidden {
+      opacity: 0 !important;
+    }
+    
+    // In fullscreen on mobile, same behavior
+    .video-player.is-fullscreen & {
+      opacity: 0 !important;
+      
+      &.visible {
+        opacity: 1 !important;
+      }
+    }
+  }
+
   button,
-  .time-display {
+  .time-display,
+  .progress-bar,
+  .subtitle-controls {
     pointer-events: all;
   }
 }
@@ -853,10 +1102,18 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px;
+  
+  // Ensure controls don't overlap with fixed navbar (64px) on all screens
+  // Add extra padding-top to account for navbar height
+  padding-top: max(20px, calc(20px + env(safe-area-inset-top, 0px)));
+  
+  // On mobile, ensure even more space for safe areas
+  @media (max-width: 768px) {
+    padding-top: max(20px, calc(20px + env(safe-area-inset-top, 0px)));
+  }
 }
 
-.back-button,
-.cast-button {
+.back-button {
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -903,18 +1160,65 @@
 }
 
 .progress-bar {
-  height: 4px;
+  position: relative;
+  height: 6px;
   background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
+  border-radius: 3px;
   margin-bottom: 16px;
   cursor: pointer;
+  transition: height 0.2s ease;
+
+  &:hover {
+    height: 8px;
+    
+    .progress-hover-indicator {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    height: 8px;
+  }
+
+  // Touch-friendly on mobile
+  @media (max-width: 768px) {
+    height: 8px;
+    margin-bottom: 12px;
+    
+    &:active {
+      height: 10px;
+    }
+  }
 }
 
 .progress-filled {
+  position: relative;
   height: 100%;
   background: var(--brand);
-  border-radius: 2px;
-  transition: width 0.1s ease;
+  border-radius: 3px;
+  transition: width 0.1s linear;
+  z-index: 2;
+}
+
+.progress-hover-indicator {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: var(--brand);
+  border: 2px solid white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.15s ease;
+  opacity: 1;
+  
+  // Hide on mobile (touch devices)
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 .controls-actions {
@@ -970,27 +1274,931 @@
   color: rgba(255, 255, 255, 0.8);
 }
 
+// ===== Movie Info and Rating Section (Watch Page) =====
+.watch-movie-info {
+  background: var(--bg);
+  padding: 48px 0;
+  border-top: 1px solid var(--border);
+
 @media (max-width: 768px) {
-  .controls-top,
+    padding: 32px 0;
+  }
+}
+
+.movie-info-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+}
+
+.movie-info-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 28px;
+  }
+}
+
+.movie-info-year {
+  font-size: 18px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.movie-info-overview {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  max-width: 800px;
+  
+  @media (max-width: 768px) {
+    font-size: 15px;
+    margin-bottom: 24px;
+  }
+}
+
+.movie-rating-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 32px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 24px;
+  }
+}
+
+.rating-average,
+.rating-user {
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+    
+    @media (max-width: 768px) {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+  }
+}
+
+.rating-display {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rating-stars-display {
+  display: flex;
+  align-items: center;
+}
+
+.rating-text {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.rating-average-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+}
+
+.rating-count {
+  font-size: 14px;
+  color: var(--text-secondary);
+  
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+}
+
+.no-ratings {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-style: italic;
+}
+
+.rating-interactive {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rating-error {
+  color: var(--danger);
+  font-size: 14px;
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+}
+
+.rating-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+// ===== Star Rating Component =====
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  
+  &.read-only {
+    .star-button {
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+  
+  &.interactive {
+    .star-button {
+      cursor: pointer;
+      
+      &:hover:not(:disabled) {
+        transform: scale(1.1);
+      }
+      
+      &:active:not(:disabled) {
+        transform: scale(0.95);
+      }
+      
+      &:focus {
+        outline: 2px solid var(--brand);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+.star-button {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.3);
+  
+  &.filled {
+    color: #fbbf24;
+    
+    svg {
+      filter: drop-shadow(0 2px 4px rgba(251, 191, 36, 0.3));
+    }
+  }
+  
+  &.half-filled {
+    color: #fbbf24;
+    position: relative;
+    
+    svg {
+      opacity: 0.5;
+    }
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  svg {
+    transition: all 0.2s ease;
+  }
+  
+  .half-star {
+    opacity: 0.5;
+  }
+}
+
+.rating-value {
+  margin-left: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+    margin-left: 8px;
+  }
+}
+
+// ===== Comments Section (Watch Page) =====
+.watch-comments-section {
+  background: var(--bg);
+  padding: 48px 0;
+  border-top: 1px solid var(--border);
+  
+  @media (max-width: 768px) {
+    padding: 32px 0;
+  }
+}
+
+.comment-section {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.comment-section-header {
+  margin-bottom: 32px;
+  
+  h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    
+    @media (max-width: 768px) {
+      font-size: 24px;
+    }
+  }
+}
+
+// ===== Comment Form =====
+.comment-form {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
+}
+
+.comment-form-header {
+  margin-bottom: 16px;
+  
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
+  }
+}
+
+.comment-form-body {
+  margin-bottom: 16px;
+}
+
+.comment-form-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--brand);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+  
+  &::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.comment-form-error {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: var(--danger);
+  font-size: 14px;
+}
+
+.comment-form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.comment-form-login {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 32px;
+  
+  p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 15px;
+  }
+}
+
+// ===== Comment List =====
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.comment-empty {
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  
+  p {
+    color: var(--text-secondary);
+    font-size: 15px;
+    margin: 0;
+  }
+}
+
+.comment-loading-container,
+.comment-error-container {
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  
+  p {
+    color: var(--text-secondary);
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+}
+
+.comment-error-container {
+  p {
+    color: var(--danger);
+  }
+}
+
+// ===== Comment Item =====
+.comment-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+  }
+  
+  &.editing {
+    border-color: var(--brand);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+.comment-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 16px;
+}
+
+.comment-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-hover) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.comment-author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.comment-author-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.comment-date {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.comment-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.comment-action-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--border);
+    color: var(--text);
+  }
+  
+  &.delete {
+    color: var(--danger);
+    border-color: rgba(239, 68, 68, 0.3);
+    
+    &:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: var(--danger);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+
+.comment-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.comment-body {
+  p {
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0 0 8px 0;
+    word-wrap: break-word;
+  }
+}
+
+.comment-edited {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.comment-error {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: var(--danger);
+  font-size: 14px;
+}
+
+// ===== Comment Edit Form =====
+.comment-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comment-edit-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: var(--brand);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.comment-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+// ===== Subtitle Controls =====
+.subtitle-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 150; // Ensure controls are above video
+  
+  @media (max-width: 768px) {
+    gap: 2px;
+  }
+}
+
+.subtitle-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  transition: all 0.2s ease;
+  box-shadow: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  position: relative;
+
+  svg {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    
+    svg {
+      transform: scale(1.1);
+    }
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &.active {
+    color: #fbbf24;
+    
+    svg {
+      filter: drop-shadow(0 2px 4px rgba(251, 191, 36, 0.3));
+    }
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .subtitle-indicator {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 8px;
+    font-weight: 700;
+    background: #fbbf24;
+    color: #000;
+    padding: 2px 4px;
+    border-radius: 3px;
+    line-height: 1;
+  }
+}
+
+.subtitle-menu-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 4px;
+  transition: all 0.2s ease;
+  box-shadow: none;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 36px;
+
+  svg {
+    transition: transform 0.2s ease;
+    
+    &.rotated {
+      transform: rotate(180deg);
+    }
+  }
+
+  &:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.subtitle-menu {
+  position: absolute;
+  bottom: 48px;
+  right: 0;
+  background: rgba(15, 20, 35, 0.95);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0;
+  min-width: 160px;
+  max-width: 180px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 1px 0 rgba(255, 255, 255, 0.1) inset;
+  z-index: 200;
+  animation: fadeInDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    bottom: 60px;
+    right: 12px;
+    min-width: 150px;
+    max-width: calc(100vw - 48px);
+    border-radius: 10px;
+    
+    @media (max-width: 375px) {
+      right: 8px;
+      min-width: 140px;
+      max-width: calc(100vw - 32px);
+    }
+  }
+}
+
+.subtitle-menu-header {
+  padding: 10px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.2);
+  margin: 0;
+}
+
+.subtitle-menu-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 4px;
+}
+
+.subtitle-menu-item {
+  position: relative;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  width: 100%;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+
+  // Subtle hover effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.05);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    border-radius: 8px;
+  }
+
+  &:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.08);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.2));
+    color: white;
+    font-weight: 600;
+    box-shadow: 
+      0 0 0 1px rgba(99, 102, 241, 0.3) inset,
+      0 2px 8px rgba(99, 102, 241, 0.15);
+
+    &::before {
+      background: rgba(99, 102, 241, 0.1);
+      opacity: 1;
+    }
+
+    // Modern indicator dot instead of checkmark
+    &::after {
+      content: '';
+      position: absolute;
+      right: 12px;
+      width: 6px;
+      height: 6px;
+      background: var(--brand);
+      border-radius: 50%;
+      box-shadow: 
+        0 0 0 2px rgba(99, 102, 241, 0.2),
+        0 0 8px rgba(99, 102, 241, 0.4);
+      animation: pulse 2s ease-in-out infinite;
+    }
+  }
+
+  // Remove checkmark completely
+  .check {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px;
+    font-size: 14px;
+    min-height: 44px; // Minimum touch target
+    border-radius: 8px;
+    
+    &.active::after {
+      right: 12px;
+      width: 7px;
+      height: 7px;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+@media (max-width: 768px) {
+  .controls-top {
+    padding: 16px 12px 12px;
+    
+    .back-button {
+      min-width: 36px;
+      height: 36px;
+      padding: 8px;
+    }
+  }
+
   .controls-bottom {
     padding: 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 12px)); // Account for iPhone notch
   }
 
   .video-title {
     font-size: 14px;
+    max-width: calc(100% - 100px); // Ensure title doesn't overlap buttons
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .controls-left,
   .controls-right {
-    gap: 8px;
+    gap: 6px;
+    flex-wrap: wrap;
 
     button {
+      min-width: 32px;
+      height: 32px;
+      padding: 6px;
       font-size: 14px;
     }
   }
 
   .time-display {
-    font-size: 12px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .progress-bar {
+    height: 3px;
+    margin-bottom: 12px;
+  }
+
+  .subtitle-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 6px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .subtitle-indicator {
+      font-size: 7px;
+      top: 1px;
+      right: 1px;
+      padding: 1px 3px;
+    }
+  }
+
+  .subtitle-menu-btn {
+    width: 20px;
+    height: 32px;
+    padding: 3px;
   }
 }
 
@@ -1051,27 +2259,46 @@
     grid-template-columns: 1fr;
   }
 
+  .video-player {
+    // Adjust height for mobile navbar
+    height: calc(100vh - 64px);
+  }
+
   .controls-top {
-    padding: 16px;
+    padding: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
 
     .video-title {
-      font-size: 16px;
+      font-size: 14px;
+      flex: 1;
+      min-width: 0; // Allow flexbox to shrink
+    }
+
+    .back-button {
+      flex-shrink: 0;
     }
   }
 
   .controls-bottom {
-    padding: 0 16px 16px;
+    padding: 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
   }
 
   .controls-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .controls-left,
   .controls-right {
-    justify-content: space-between;
+    flex: 1;
+    min-width: 0;
+    justify-content: flex-start;
+    
+    &:last-child {
+      justify-content: flex-end;
+    }
   }
 }
 
@@ -1206,6 +2433,14 @@
         background: rgba(109, 109, 110, 0.9);
         transform: translateY(-2px);
       }
+    }
+
+    // Keep favorite button compact on all viewports (override .btn-secondary sizing)
+    .hero-favorite-btn {
+      padding: 0 !important;
+      min-width: 40px;
+      width: 40px;
+      height: 40px;
     }
   }
 
@@ -1363,9 +2598,11 @@
   min-height: calc(100vh - 72px);
   background: var(--bg);
   
-  // Hide footer on search page
-  & ~ .footer {
-    display: none;
+  // Desktop: ensure footer stays after content (not sticky within viewport)
+  @media (min-width: 769px) {
+    & ~ .footer {
+      margin-top: 0 !important;
+    }
   }
 }
 
@@ -1617,6 +2854,11 @@
 
 .search-results {
   padding: 40px 0;
+
+  // Prevent visual overlap with footer on desktop
+  @media (min-width: 769px) {
+    padding-bottom: 120px; // similar to auth pages extra spacing
+  }
 
   .results-header {
     margin-bottom: 24px;

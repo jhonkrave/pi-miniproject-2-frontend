@@ -13,6 +13,7 @@ import Navbar from '../components/Navbar';
 import Search from './Search';
 import Watch from './Watch';
 import Favorites from './Favorites';
+import Spinner from '../components/Spinner';
 
 /**
  * Shell component that defines the main layout for LumiFlix - mini project 2.
@@ -40,6 +41,7 @@ function Shell() {
       <Navbar />
 
       <main className="main-content" role="main">
+        <div className="route-content">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -57,6 +59,7 @@ function Shell() {
           <Route path="/movies" element={<Navigate to="/search" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </div>
 
         <footer className="footer">
           <div className="container" style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))', gap: 20, textAlign:'left'}}>
@@ -69,7 +72,7 @@ function Shell() {
               <div style={{display:'grid', gap: 6}}>
                 <Link to="/">Inicio</Link>
                 <Link to="/about">Sobre nosotros</Link>
-                <Link to="/login">Ingresar</Link>
+                <Link to="/login">Iniciar sesión</Link>
                 <Link to="/signup">Crear cuenta</Link>
               </div>
             </div>
@@ -100,6 +103,7 @@ function Shell() {
  * 
  * This component is used to protect routes that require authentication.
  * It checks if the user is authenticated and redirects to the login page if not.
+ * It waits for auth initialization to complete before making a decision.
  * 
  * @component
  * @returns {JSX.Element} The RequireAuth component with protected routes
@@ -116,8 +120,23 @@ function Shell() {
  * @since 1.0.0
  */
 function RequireAuth({ children }: { children: JSX.Element }) {
-  const { user } = useAuth();
-  if (!user) return <Navigate to="/login" replace />;
+  const { user, isInitializing } = useAuth();
+  
+  // Wait for auth initialization to complete before redirecting
+  if (isInitializing) {
+    return (
+      <div className="container" style={{padding:'100px 24px', textAlign:'center'}}>
+        <Spinner size={32} />
+        <div style={{marginTop: 16, color: 'var(--text-secondary)'}}>Verificando autenticación...</div>
+      </div>
+    );
+  }
+  
+  // Only redirect if initialization is complete and user is not authenticated
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
   return children;
 }
   

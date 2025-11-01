@@ -53,17 +53,9 @@ export default function Forgot() {
     setLoading(true);
     try {
       const cleanEmail = email.trim().toLowerCase();
-      const started = performance.now();
-      // Frontend debug logs
-      // eslint-disable-next-line no-console
-      console.log('[Forgot] submitting', { email: cleanEmail });
-      const resp = await api.forgotPassword({ email: cleanEmail });
-      // eslint-disable-next-line no-console
-      console.log('[Forgot] success', { ms: Math.round(performance.now() - started), resp });
+      await api.forgotPassword({ email: cleanEmail });
       setDone(true);
     } catch (err: any) { 
-      // eslint-disable-next-line no-console
-      console.error('[Forgot] error', err);
       setError(err?.message || 'Error al enviar el correo.');
     } finally { 
       setLoading(false); 
@@ -94,14 +86,9 @@ export default function Forgot() {
               </div>
             )}
             <button 
+              type="submit"
               disabled={!isValidEmail(email) || loading}
               style={{marginTop: 24, width: '100%'}}
-              onClick={() => {
-                try {
-                  // eslint-disable-next-line no-console
-                  console.debug('[Forgot] click');
-                } catch {}
-              }}
             >
               {loading ? 'Enviando...' : 'Enviar enlace'}
             </button>

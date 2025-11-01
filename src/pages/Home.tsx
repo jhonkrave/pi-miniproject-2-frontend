@@ -5,7 +5,7 @@ import MovieCard from '@/components/MovieCard';
 import Spinner from '@/components/Spinner';
 import { useAuth } from '@/context/AuthContext';
 import { useFavorites } from '@/context/FavoritesContext';
-import { PlayIcon, HeartIcon, StarIcon, FilmIcon, SmartphoneIcon } from '@/components/Icons';
+import { PlayIcon, HeartIcon, StarIcon, FilmIcon, SmartphoneIcon, ChevronDownIcon } from '@/components/Icons';
 
 /**
  * Home component for LumiFlix - mini project 2
@@ -49,7 +49,7 @@ export default function Home() {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [showFullOverview, setShowFullOverview] = useState(false);
   const [loadingFavorite, setLoadingFavorite] = useState(false);
-  const { user } = useAuth();
+  const { user, isInitializing } = useAuth();
   const { isFavorite, toggle } = useFavorites();
 
   useEffect(() => {
@@ -101,6 +101,15 @@ export default function Home() {
   const featuredMovies = popular.slice(0, 5);
   const currentHero = featuredMovies[currentHeroIndex];
 
+  function scrollToMore() {
+    const anchor = document.getElementById('after-hero');
+    if (anchor) {
+      anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.scrollTo({ top: window.innerHeight - 64, behavior: 'smooth' });
+    }
+  }
+
   // Truncate overview for mobile
   const getTruncatedOverview = (overview: string, maxLength: number = 120) => {
     if (overview.length <= maxLength) return overview;
@@ -126,6 +135,15 @@ export default function Home() {
     }
   }
 
+  // Esperar a que termine la verificación inicial de autenticación para evitar flash
+  if (isInitializing) {
+    return (
+      <div className="container" style={{padding:'100px 24px', textAlign:'center'}}>
+        <Spinner /> <span style={{marginLeft:12}}>Cargando...</span>
+      </div>
+    );
+  }
+
   // Si no está logueado, mostrar página de bienvenida
   if (!user) {
     return (
@@ -143,11 +161,11 @@ export default function Home() {
             <div className="hero-welcome-actions">
               <Link to="/signup">
                 <button className="btn-primary hero-welcome-signup">
-                  Crear cuenta gratis
+                  Crear cuenta
                 </button>
               </Link>
               <Link to="/login">
-                <button className="hero-welcome-login">
+                <button className="btn-secondary hero-welcome-login">
                   Iniciar sesión
                 </button>
               </Link>
@@ -173,6 +191,17 @@ export default function Home() {
               </div>
             </div>
           </div>
+          {/* Scroll CTA - visible solo para usuarios autenticados */}
+          {user && (
+          <button
+            className="hero-scroll-cta"
+            onClick={scrollToMore}
+            aria-label="Ver más"
+          >
+            <span>Ver contenido</span>
+            <ChevronDownIcon size={16} />
+          </button>
+          )}
         </section>
 
         {/* Muestra de contenido limitada para usuarios no logueados */}
@@ -281,8 +310,21 @@ export default function Home() {
               ))}
             </div>
           </div>
+          {user && (
+            <button
+              className="hero-scroll-cta"
+              onClick={scrollToMore}
+              aria-label="Ver catálogo"
+            >
+              <span>Ver catálogo</span>
+              <ChevronDownIcon size={16} />
+            </button>
+          )}
         </section>
       )}
+
+      {/* Anchor to ensure smooth scroll lands just after hero */}
+      <div id="after-hero" />
 
       {/* Mis favoritos (solo si está logueado y tiene favoritos) */}
       {!loading && !error && user && favorites.length > 0 && (
