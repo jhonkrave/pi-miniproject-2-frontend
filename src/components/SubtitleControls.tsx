@@ -362,12 +362,13 @@ export default function SubtitleControls({ movieId, videoRef, movieOverview, mov
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Configuración de subtítulos"
             aria-expanded={menuOpen}
+            aria-controls="subtitle-menu"
           >
             <ChevronDownIcon size={16} className={menuOpen ? 'rotated' : ''} />
           </button>
 
           {menuOpen && (
-            <div className="subtitle-menu">
+            <div id="subtitle-menu" className="subtitle-menu">
               <div className="subtitle-menu-header">SUBTÍTULOS</div>
               <div className="subtitle-menu-options">
                 <button

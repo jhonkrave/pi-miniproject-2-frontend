@@ -72,7 +72,7 @@ export default function Login() {
 
   return (
     <AuthLayout title="Inicia sesión" subtitle="Accede a tu cuenta">
-      <form onSubmit={onSubmit} noValidate>
+      <form onSubmit={onSubmit} noValidate aria-busy={loading}>
         <div className="field">
           <label htmlFor="email">Correo electrónico</label>
           <input 
@@ -82,6 +82,9 @@ export default function Login() {
             onChange={e => setEmail(e.target.value)}
             placeholder="tu@email.com"
             required 
+            aria-required="true"
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={error ? 'login-error' : undefined}
             disabled={loading}
             autoComplete="email"
           />
@@ -95,12 +98,21 @@ export default function Login() {
             onChange={e => setPassword(e.target.value)}
             placeholder="••••••••"
             required
+            aria-required="true"
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={error ? 'login-error' : undefined}
             disabled={loading}
             autoComplete="current-password"
           />
         </div>
         {error && (
-          <div role="alert" className="error" aria-live="polite" style={{marginBottom: 20}}>
+          <div 
+            id="login-error"
+            role="alert" 
+            className="error" 
+            aria-live="assertive" 
+            style={{marginBottom: 20}}
+          >
             {error}
           </div>
         )}
